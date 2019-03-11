@@ -63,11 +63,6 @@ public class FindNearestPoint {
 		
 		
 		for(int i = 0; i < n; i++) {
-			double A = (d[i].getEntry(0));
-			double B = -(d[i].getEntry(1));
-			double C = -(d[i].getEntry(2));
-			double[] dir = {A,B,C};
-			RealVector d1 = new ArrayRealVector(dir);
 			
 //			double d2 = d[i].dotProduct(d[i]);
 //			double da = d[i].dotProduct(a[i]);
