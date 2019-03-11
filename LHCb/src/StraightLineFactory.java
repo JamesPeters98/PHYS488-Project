@@ -1,5 +1,6 @@
 import java.util.Arrays;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Line;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.linear.EigenDecomposition;
@@ -36,9 +37,13 @@ public class StraightLineFactory {
 			mat = mat.add(m);
 		}
 		
+		//Calculate Eigenvectors and Eigenvalues.
 		ed = new EigenDecomposition(mat);
 		
-		System.out.println(Arrays.toString(ed.getRealEigenvalues()));
+		System.out.println(getDirectionVector());
+		System.out.println(getOriginVector());
+		if(!isUnique()) System.out.println("WARNING: Line is not unique!");
+		
 	}
 	
 	public RealVector getDirectionVector() {
@@ -49,6 +54,9 @@ public class StraightLineFactory {
 		return mean;
 	}
 	
+	
+	
+	//The fitted line (hyperplane) is unique when the smallest eigenvalue has multiplicity of 1.
 	public boolean isUnique() {
 		return ed.getRealEigenvalue(dimensionSize-1) < ed.getRealEigenvalue(dimensionSize-2);
 	}
