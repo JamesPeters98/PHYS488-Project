@@ -69,16 +69,16 @@ public class FindNearestPoint {
 //			System.out.println("v: "+d[i]+" d2: "+d2+", da: "+da);
 						
 			
-			double D = d1.dotProduct(a[i]);
-			
-			for(int ii = 0; ii < dim; ii++) {
-				b[ii] += dir[ii]*D;
-				for(int jj = 0; jj < dim; jj++) {
-					M[ii][jj] += dir[ii]*dir[jj];
-					//-M[ii][ii] -= d2;
-					//b[ii] += dir[ii]*D;
-				}
-			}
+//			double D = d1.dotProduct(a[i]);
+//			
+//			for(int ii = 0; ii < dim; ii++) {
+//				b[ii] += dir[ii]*D;
+//				for(int jj = 0; jj < dim; jj++) {
+//					M[ii][jj] += dir[ii]*dir[jj];
+//					//-M[ii][ii] -= d2;
+//					//b[ii] += dir[ii]*D;
+//				}
+//			}
 		}
 		
 		RealMatrix mat = new BlockRealMatrix(M);
