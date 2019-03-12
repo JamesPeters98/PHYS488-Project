@@ -11,40 +11,58 @@ public class EventsReader {
 	public EventsReader() throws FileNotFoundException {
 		events = new ArrayList<Event>();
 		
-		Scanner scanner = new Scanner(new File("b0vectors.csv"));
-        scanner.useDelimiter(" Next... ");
+    	//Split CSV into each event using the 'Next...' keyword.
+		Scanner scanner = new Scanner(new File("b0vectors1.csv"));
+        scanner.useDelimiter("\\s*Next...\\s*");
         
+        //Loop over every event in the CSV.
         while(scanner.hasNext()){
+        	//Split each event into their rows.
             Scanner event = new Scanner(scanner.next());
             event.useDelimiter("\n ");
             
+            //Create array to store the data for this event.
             ArrayList<Double> data = new ArrayList<Double>();
+            
+            //Create event with 5 particles - B0, two muons and two pions.
             Event e = new Event(5);
             
+            //Read data from each row and create array for each event.
             while(event.hasNext()) {
             	String row = event.next();
-            	String[] values = row.split(", ");
+            	String[] values = row.split("\\s*,\\s*");
             	for(String value : values) {
             		double v = toDouble(value);
             		if(!Double.isNaN(v)) data.add(v);
             	}
             }
             
+            //Add data from CSV to event
         	e.setTruePos(data.get(0),data.get(1),data.get(2));
-        	// Add rest of values here.
+        	e.setParticleMomentum(0, data.get(6).intValue(), data.get(3), data.get(4), data.get(5));
+        	e.setDecayTime(data.get(7));
+        	e.setDecayLength(data.get(8));
         	
-        	events.add(e);
-            
-            
+        	//Loop over remaining particles and add to event
+        	int n = 9;      	
+        	for(int i = 0; i <= 3; i++) {
+        		e.setParticleMomentum(i+1, data.get(n+3).intValue(), data.get(n),data.get(n+1), data.get(n+2));
+        		n = n + 4;
+        	}
+   
+        	//Add event to array and close scanner.
+        	events.add(e);         
             event.close();
         }
         scanner.close();
 	}
 	
+	//Method to convert string to double and catch any exception.
 	private double toDouble(String s) {
 		try { 
 			return Double.valueOf(s);
 		} catch(Exception e) { 
+			System.err.println("Value: "+s+" was invalid!");
 			return Double.NaN;
 		}
 	}
