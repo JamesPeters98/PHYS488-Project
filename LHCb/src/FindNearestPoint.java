@@ -33,31 +33,31 @@ public class FindNearestPoint {
 		M = new BlockRealMatrix(dim, dim);
 		b = new ArrayRealVector(dim);
 		
-//		for(int i = 0; i < n; i++) {
-//			double d2 = d[i].dotProduct(d[i]);
-//			double da = d[i].dotProduct(a[i]);
-//			System.out.println("v: "+d[i]+" d2: "+d2+", da: "+da);
-//			
-//			for(int ii = 0; ii < dim; ii++) {
-//				for(int jj = 0; jj < dim; jj++) {
-//					double incM = d[i].getEntry(ii)*d[i].getEntry(jj);
-//					System.out.println(ii+","+jj+": "+M);
-//					M.addToEntry(ii, jj, incM);
-//					System.out.println(ii+","+jj+": "+M);
-//					M.addToEntry(ii, ii, -d2);
-//					System.out.println(ii+","+jj+": "+M);
-//					System.out.println("---------");
-//					
-//					
-//					double incB = (d[i].getEntry(ii)*da) - (a[i].getEntry(ii)*d2);
-//					b.addToEntry(ii, incB);
-//				}
-//			}
-//		}
+		for(int i = 0; i < n; i++) {
+			double d2 = d[i].dotProduct(d[i]);
+			double da = d[i].dotProduct(a[i]);
+			System.out.println("v: "+d[i]+" d2: "+d2+", da: "+da);
+			
+			for(int ii = 0; ii < dim; ii++) {
+				for(int jj = 0; jj < dim; jj++) {
+					double incM = d[i].getEntry(ii)*d[i].getEntry(jj);
+					System.out.println(ii+","+jj+": "+M);
+					M.addToEntry(ii, jj, incM);
+					System.out.println(ii+","+jj+": "+M);
+					M.addToEntry(ii, ii, -d2);
+					System.out.println(ii+","+jj+": "+M);
+					System.out.println("---------");
+					
+					
+					double incB = (d[i].getEntry(ii)*da) - (a[i].getEntry(ii)*d2);
+					b.addToEntry(ii, incB);
+				}
+			}
+		}
 		
-		double[][] M = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-		double[] b = {0, 0, 0};
-	
+//		double[][] M = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+//		double[] b = {0, 0, 0};
+//	
 		
 		
 		
@@ -81,10 +81,10 @@ public class FindNearestPoint {
 //			}
 		}
 		
-		RealMatrix mat = new BlockRealMatrix(M);
-		System.out.println(mat);
+//		RealMatrix mat = new BlockRealMatrix(M);
+//		System.out.println(mat);
 		
-		GaussianElimination ge = new GaussianElimination(M,b,3);
+		GaussianElimination ge = new GaussianElimination(M.getData(),b.toArray(),3);
 
 	}
 	
