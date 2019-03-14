@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.linear.EigenDecomposition;
@@ -9,9 +11,12 @@ public class StraightLineFactory {
 	RealVector mean;
 	int dimensionSize = 0;
 	EigenDecomposition ed;
+	public RealVector[] rawVectors;
 	
 	//Find straight from set of 3D points (Use ArrayRealVector).
 	public StraightLineFactory(RealVector[] vectors) throws Exception {
+		
+		this.rawVectors = vectors;
 		
 		//Take first vectors dimensions as the dimension size for the set.
 		if(dimensionSize == 0) dimensionSize = vectors[0].getDimension();
@@ -39,11 +44,17 @@ public class StraightLineFactory {
 		//Compute the covariance of the vectors as a Matrix
 		RealMatrix XPX = X.transpose().multiply(PX);
 		
+		for(double[] row : XPX.getData()) {
+			System.out.println(Arrays.toString(row));
+		}
+		
 		//Calculate Eigenvectors and Eigenvalues.
 		ed = new EigenDecomposition(XPX);
 		
-		System.out.println(getDirectionVector());
-		System.out.println(getOriginVector());		
+		System.out.println("Direction Vector | "+getDirectionVector());
+		System.out.println("Origin Vector    | "+getOriginVector());	
+		System.out.println("------------------------------------------");	
+
 	}
 	
 	public RealVector getDirectionVector() {
