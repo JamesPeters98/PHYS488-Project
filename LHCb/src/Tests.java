@@ -3,6 +3,8 @@ import java.util.Random;
 import org.apache.commons.math3.linear.RealVector;
 
 import graphs.Graph;
+import utils.SimulateSmearing;
+import utils.Utils;
 
 public class Tests {
 	
@@ -17,9 +19,9 @@ public class Tests {
 		lines = new RealVector[n][];
 		
 		Random rand = new Random();
-		double x = (rand.nextDouble()-.5);
-		double y = (rand.nextDouble()-.5);
-		double z = (rand.nextDouble()-.5);
+		double x = (rand.nextDouble()-0.5);
+		double y = (rand.nextDouble()-0.5);
+		double z = (rand.nextDouble()-0.5);
 		
 		for(int i = 0; i < n; i++) {
 			StraightLineFactory line = createLine(x,y,z, (rand.nextDouble()-.5),rand.nextDouble()-.5,rand.nextDouble()-.5,0.01);
