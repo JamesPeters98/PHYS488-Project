@@ -154,7 +154,12 @@ class Geometry
 		
 		if (volume >= 0) {
 		    // use Eloss[volume] to get dE/dx and dist to calculate dE
-		    double lostE = dist*Eloss[volume].getEnergyLoss(p); 
+			double lostE = dist*Eloss[volume].getEnergyLoss(p); 
+			
+			if (lostE > p.getLastE() - p.getMass()) {
+				lostE = p.getLastE() - p.getMass();
+			}
+			
 		    p.reduceEnergy(lostE);
 		}
     }

@@ -48,7 +48,7 @@ public class particleTracker
     	    // implement Energy Loss, abort if we're out of energy!
     	    Experiment.doEloss(output);
     	    
-    	    if (output.getLastE() <= 0.) {
+    	    if (output.getLastMomentumMag() <= 0.) {
     	    	System.out.println("Particle out of energy, done.");
     	    	break;
     	    }
