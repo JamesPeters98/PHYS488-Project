@@ -73,10 +73,10 @@ class RunSimulation
 //    int numberOfEvents = keyboard.nextInt();
 	
 	double startMomentum = 1000;
-	double startAngle = 0;
+	double startAngle = 0.1;
 	double simTime = 1e-7;
-	double ironThickness = 1;
-	double numberOfEvents = 50000;
+	double ironThickness = 0.1;
+	double numberOfEvents = 1;
 
 	// Define the genotrical properties of the experiment
 	Geometry Experiment = SetupExperiment(ironThickness);
@@ -88,10 +88,10 @@ class RunSimulation
 	Histogram gen_startMom = new Histogram(50, 0., startMomentum*1.01, "initial generated Momentum");
 	Histogram sim_endMom = new Histogram(50, 0., startMomentum*1.01, "simulated final Momentum");
 
-	Histogram gen_startTheta = new Histogram(100, 0, Math.PI/4, "initial generated Theta");
-	Histogram sim_endTheta = new Histogram(100, 0, Math.PI/4, "simulated final Theta");
-	Histogram det_endTheta1 = new Histogram(100, 0, Math.PI/4, "measured final Theta Det1");
-	Histogram det_endTheta2 = new Histogram(100, 0, Math.PI/4, "measured final Theta Det2");
+	Histogram gen_startTheta = new Histogram(100, 0, Math.PI, "initial generated Theta");
+	Histogram sim_endTheta = new Histogram(100, 0, Math.PI, "simulated final Theta");
+	Histogram det_endTheta1 = new Histogram(100, 0, Math.PI, "measured final Theta Det1");
+	Histogram det_endTheta2 = new Histogram(100, 0, Math.PI, "measured final Theta Det2");
 
 
 	// start of main loop: run the simulation numberOfEvents times
@@ -134,8 +134,8 @@ class RunSimulation
 	    for (int ip = 0; ip < Particles_sim.length; ip++) {
 	    	for (int idet = 1; idet < Experiment.getNshapes(); idet++) {
 		    double [] txyz = Particles_det[ip].getPosition(idet);
-	    	    //System.out.println("Particle " + ip + " detection in volume " + idet);
-//	    	    System.out.println("[t,x,y,z] = [" + txyz[0] + ", " + txyz[1] + ", " +
+	    	    System.out.println("Particle " + ip + " detection in volume " + idet);
+	    	    //System.out.println("[t,x,y,z] = [" + txyz[0] + ", " + txyz[1] + ", " +
 //		    		       txyz[2] + ", " + txyz[3] + "]");
 	    	}
 	    }
@@ -226,10 +226,8 @@ class RunSimulation
 	// * then add one block of iron: 0.3x0.3 m^2 wide in x,y-direction, ironThickness cm thick in z-direction
 	// * then add two thin (1mm) "silicon detectors" 10cm and 20cm after the iron block
 
-	Geometry Experiment = new Geometry(randGen, 0.0005);
-	Experiment.AddCuboid(-0.15, -0.15, 0.,
-			     0.15, 0.15, ironThickness+0.25,
-			     0., 0., 0.);
+	Geometry Experiment = new Geometry(randGen, 0.000005);
+	
 	Experiment.AddCuboid(-0.10, -0.10, 0.,
 			     0.10, 0.10, ironThickness,
 			     7.87, 26, 55.845);
@@ -241,6 +239,18 @@ class RunSimulation
 	Experiment.AddCuboid(-0.15, -0.15, ironThickness+0.20,
 			     0.15, 0.15, ironThickness+0.201,
 			     2.33, 14, 28.085);
+	
+//	int detectors = 2;
+//	double detectorThickness = 0.1;
+//	double spacing = 0.1;
+//	for(int i = 0; i < detectors; i++) {
+////		Experiment.AddDisk(0, 0, i*(detectorThickness+spacing),
+////			     0.042, 0.008, detectorThickness,
+////			     2.33, 14, 28.085);
+//		Experiment.AddCuboid(-0.15, -0.15, i*(detectorThickness+spacing),
+//			     0.15, 0.15, i*(detectorThickness+spacing)+detectorThickness,
+//			     2.33, 14, 28.085);
+//	}
 	
 	Experiment.Print();
 
@@ -261,7 +271,7 @@ class RunSimulation
 	double[] mom0 = {startMomentum*Math.sin(startAngle)*Math.cos(phi),
 			 startMomentum*Math.sin(startAngle)*Math.sin(phi),
 			 startMomentum*Math.cos(startAngle)};
-	Particles_gen[0] = new Particle("muon", pos0, mom0, numSteps);
+	Particles_gen[0] = new Particle(13, pos0, mom0, numSteps);
 
 	return Particles_gen;
     }

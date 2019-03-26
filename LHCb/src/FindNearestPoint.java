@@ -18,6 +18,8 @@ public class FindNearestPoint {
 	private RealMatrix R;
 	private RealVector q;
 	
+	private RealVector solution;
+	
 	public FindNearestPoint(RealVector[] a, RealVector[] d, int dimensions) throws Exception {
 		if(a.length != d.length) throw new Exception("Number of position vectors doesn't match number of direction vectors.");
 		this.n = a.length;
@@ -40,7 +42,12 @@ public class FindNearestPoint {
 			q = q.add(I.subtract(d[i].outerProduct(d[i])).operate(a[i]));
 		}
 		
-		new GaussianElimination(R.getData(),q.toArray(),dim);
+		GaussianElimination g = new GaussianElimination(R.getData(),q.toArray(),dim);
+		solution = g.getSolution();
+	}
+	
+	public RealVector getPoint() {
+		return solution;
 	}
 	
 

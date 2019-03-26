@@ -33,6 +33,7 @@ public class EnergyLoss {
 			double inner = 0.5*Math.log(2*me*B*B*g*g*wMax/(I*I))-(B*B);
 			
 			//Convert from MeV/cm to MeV/m;
+			System.out.println("Energy loss: "+100*outer*inner);
 			return 100*outer*inner;
 		} else {
 			return 0;

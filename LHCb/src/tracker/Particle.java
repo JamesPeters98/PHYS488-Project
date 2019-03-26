@@ -2,12 +2,13 @@ package tracker;
 
 import java.io.*;
 
-class Particle
+public class Particle
 {
     // a simple class to store properties of a particle as well as its history
     
     //Particle specific constants
-    private String ptype; // type of particle: currently "electron" or "proton" or "muon"
+    private int ptype; // id of particle in PDGid format.
+    private String pName; //name of particle
     private double m0;    // rest mass (MeV)
     private int charge;   // particle charge (in units of elementary charge)
     
@@ -18,31 +19,61 @@ class Particle
 
     // constructor to initialise the particle
     // and make space to store the trajectory
-    public Particle(String particleType, double [] position0, double [] momentum0, int maxSteps)
+//    public Particle(String particleType, double [] position0, double [] momentum0, int maxSteps)
+//    {
+//        position = new double[maxSteps+1][4];
+//        momentum = new double[maxSteps+1][3];
+//        laststep = 0;
+//        position[0] = position0;
+//        momentum[0] = momentum0;
+//        ptype = particleType;
+//	if (ptype == "electron") {
+//	    m0 = 0.51099895;
+//	    charge = -1;
+//	} else if (ptype == "muon") {
+//	    m0 = 105.658;
+//	    charge = -1;
+//	} else if (ptype == "proton") {
+//	    m0 = 938.27231;
+//	    charge = 1;
+//	}
+//    }
+    
+    public Particle(int PDGid, double [] position0, double [] momentum0, int maxSteps)
     {
         position = new double[maxSteps+1][4];
         momentum = new double[maxSteps+1][3];
         laststep = 0;
         position[0] = position0;
         momentum[0] = momentum0;
-        ptype = particleType;
-	if (ptype == "electron") {
+        this.ptype = PDGid;
+        
+	if (ptype == 13) {
+		pName = "muon";
 	    m0 = 0.51099895;
 	    charge = -1;
-	} else if (ptype == "muon") {
-	    m0 = 105.658;
-	    charge = -1;
-	} else if (ptype == "proton") {
-	    m0 = 938.27231;
+	} else if (ptype == -13) {
+		pName = "muon";
+	    m0 = 0.51099895;
 	    charge = 1;
+	} else if (ptype == 211) {
+		pName = "pion";
+	    m0 = 139.57018;
+	    charge = 1;
+	} else if (ptype == -211) {
+		pName = "pion";
+	    m0 = 139.57018;
+	    charge = -1;
 	}
+	
     }
 
     // return properties of particle
     public int getCharge() {return charge;}
     public double getMass() {return m0;}
     public int getSteps() {return laststep;}
-    public String getType() {return ptype;}
+    public int getType() {return ptype;}
+    public String getParticleName() { return pName; }
 
     // Lorentz calculations for beta and gamma
     public double getBeta() { return getLastMomentumMag()/getLastE(); }
@@ -167,18 +198,18 @@ class Particle
 
     public void print()
     {
-//        System.out.println("E = " + getLastE()
-//			   + " MeV, px = " + getLastPx()
-//			   + " MeV, py = " + getLastPy()
-//			   + " MeV, pz = " + getLastPz()
-//			   + " MeV, mass = " + getMass() + " MeV"
-//			   );
-//        System.out.println("t = " + getLastT()
-//			   + " s, x = " + getLastX()
-//			   + " m, y = " + getLastY()
-//			   + " m, z = " + getLastZ()
-//			   + " m, charge = " + getCharge()
-//			   );
+        System.out.println("E = " + getLastE()
+			   + " MeV, px = " + getLastPx()
+			   + " MeV, py = " + getLastPy()
+			   + " MeV, pz = " + getLastPz()
+			   + " MeV, mass = " + getMass() + " MeV"
+			   );
+        System.out.println("t = " + getLastT()
+			   + " s, x = " + getLastX()
+			   + " m, y = " + getLastY()
+			   + " m, z = " + getLastZ()
+			   + " m, charge = " + getCharge()
+			   );
     }
     
     public void applySmallRotation(double dtheta_xz, double dtheta_yz)

@@ -58,18 +58,20 @@ public class Graph extends JFrame {
 	        dataset.add(series);
         }
         
-        for(int i = 0; i < a.length; i++) {
-	        XYZSeries<String> series = new XYZSeries<String>("Line "+i);
-	        int steps = 3000;
-	        int range = 5;
-	        for(int j = -steps/2; j <= steps/2; j++) {
-	        	series.add(
-		        		a[i].getEntry(0)+d[i].getEntry(0)*range*(2*j)/steps,
-		        		a[i].getEntry(1)+d[i].getEntry(1)*range*(2*j)/steps,
-		        		a[i].getEntry(2)+d[i].getEntry(2)*range*(2*j)/steps);
+        if(a != null) {
+        	for(int i = 0; i < a.length; i++) {
+		        XYZSeries<String> series = new XYZSeries<String>("Line "+i);
+		        int steps = 1000;
+		        int range = 1;
+		        for(int j = -steps/2; j <= steps/2; j++) {
+		        	series.add(
+			        		a[i].getEntry(0)+d[i].getEntry(0)*range*(2*j)/steps,
+			        		a[i].getEntry(1)+d[i].getEntry(1)*range*(2*j)/steps,
+			        		a[i].getEntry(2)+d[i].getEntry(2)*range*(2*j)/steps);
+		        }
+		        
+		        dataset.add(series);
 	        }
-	        
-	        dataset.add(series);
         }
         return dataset;
     }
@@ -79,9 +81,9 @@ public class Graph extends JFrame {
         Chart3D chart = Chart3DFactory.createScatterChart("Raw Data", "", dataset, "X", "Y", "Z");
         chart.setChartBoxColor(new Color(255, 255, 255, 128));
         XYZPlot plot = (XYZPlot) chart.getPlot();
-        plot.getXAxis().setRange(-1, 1);
-        plot.getYAxis().setRange(-1, 1);
-        plot.getZAxis().setRange(-1, 1);
+        plot.getXAxis().setRange(-0.024, 0.024);
+        plot.getYAxis().setRange(-0.024, 0.024);
+        plot.getZAxis().setRange(-0.1, 0.6);
         
         ScatterXYZRenderer renderer = (ScatterXYZRenderer) plot.getRenderer();
         renderer.setSize(0.02);

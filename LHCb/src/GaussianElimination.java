@@ -1,3 +1,6 @@
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
 /**
  ** Java Program to Implement Gaussian Elimination Algorithm
  **/
@@ -6,6 +9,8 @@
 /** Class GaussianElimination **/
 public class GaussianElimination
 {
+	
+	private RealVector solution;
 	
 	public GaussianElimination(double[][] A, double[] B, int dimensions) {
 	        int N = dimensions;
@@ -44,7 +49,7 @@ public class GaussianElimination
         }
  
         /** Print row echelon form **/
-        printRowEchelonForm(A, B);
+        //printRowEchelonForm(A, B);
  
         /** back substitution **/
         double[] solution = new double[N];
@@ -54,9 +59,12 @@ public class GaussianElimination
             for (int j = i + 1; j < N; j++) 
                 sum += A[i][j] * solution[j];
             solution[i] = (B[i] - sum) / A[i][i];
-        }        
+        }    
+        
+        this.solution = new ArrayRealVector(solution);
+        
         /** Print solution **/
-        printSolution(solution);
+        //printSolution(solution);
     }
     /** function to print in row    echleon form **/
     public void printRowEchelonForm(double[][] A, double[] B)
@@ -77,8 +85,12 @@ public class GaussianElimination
         int N = sol.length;
         System.out.println("\nSolution : ");
         for (int i = 0; i < N; i++) 
-            System.out.printf("%.3f ", sol[i]);   
+            System.out.printf("%.5f mm ", sol[i]*1000);   
         System.out.println();     
-    }    
+    } 
+    
+    public RealVector getSolution() {
+    	return solution;
+    }
 
 }

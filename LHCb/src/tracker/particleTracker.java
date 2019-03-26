@@ -56,12 +56,12 @@ public class particleTracker
 		    lastVolume = Experiment.getVolume(output);
 		    
 		    // huge output: need to disable before running large numbers of steps+events
-		    //System.out.println("Step " + n);
-		    //output.print();
-		    //System.out.println("In volume " + lastVolume);
+//		    System.out.println("Step " + n);
+//		    output.print();
+//		    System.out.println("In volume " + lastVolume);
 
 		    if (!Experiment.isInVolume(output, 0)) {
-				//System.out.println("Particle left the world, done.");
+				System.out.println("Particle left the world, done.");
 				output.print();
 				break;
 		    }

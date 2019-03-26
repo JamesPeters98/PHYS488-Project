@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -13,6 +14,8 @@ public class StraightLineFactory {
 	EigenDecomposition ed;
 	public RealVector[] rawVectors;
 	
+	private boolean isValid = true; //Set to false if only one point is provided.
+	
 	//Find straight from set of 3D points (Use ArrayRealVector).
 	public StraightLineFactory(RealVector[] vectors) throws Exception {
 		
@@ -20,6 +23,8 @@ public class StraightLineFactory {
 		
 		//Take first vectors dimensions as the dimension size for the set.
 		if(dimensionSize == 0) dimensionSize = vectors[0].getDimension();
+		
+		if(vectors.length <= 1) isValid = false;
 		
 		//Create X Matrix
 		RealMatrix X = new BlockRealMatrix(vectors.length,3);
@@ -44,17 +49,22 @@ public class StraightLineFactory {
 		//Compute the covariance of the vectors as a Matrix
 		RealMatrix XPX = X.transpose().multiply(PX);
 		
-		for(double[] row : XPX.getData()) {
-			System.out.println(Arrays.toString(row));
-		}
+//		for(double[] row : XPX.getData()) {
+//			System.out.println(Arrays.toString(row));
+//		}
 		
 		//Calculate Eigenvectors and Eigenvalues.
 		ed = new EigenDecomposition(XPX);
 		
+		if(!isValid()) System.out.println("Invalid line!!!");
 		System.out.println("Direction Vector | "+getDirectionVector());
 		System.out.println("Origin Vector    | "+getOriginVector());	
 		System.out.println("------------------------------------------");	
 
+	}
+	
+	public StraightLineFactory(ArrayList<RealVector> vectors) throws Exception {
+		this(vectors.toArray(new RealVector[vectors.size()]));
 	}
 	
 	public RealVector getDirectionVector() {
@@ -63,5 +73,9 @@ public class StraightLineFactory {
 	
 	public RealVector getOriginVector() {
 		return mean;
+	}
+	
+	public boolean isValid() {
+		return isValid;
 	}
 }

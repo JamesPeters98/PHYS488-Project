@@ -33,49 +33,74 @@ class Geometry
 
     private double minfeaturesize;
 
-    public Geometry(Random rg, double featuresize)
-    {
-	randGen = rg;
-	nshapes = 0;
-	type = new int[maxShapes];
-	rho_Z_A = new double[maxShapes][3];
-	shapes = new double[maxShapes][];
+    public Geometry(Random rg, double featuresize) {
+		randGen = rg;
+		nshapes = 0;
+		type = new int[maxShapes];
+		rho_Z_A = new double[maxShapes][3];
+		shapes = new double[maxShapes][];
+		
+		Eloss = new EnergyLoss[maxShapes];
+		MultScatter = new MCS[maxShapes];
 	
-	Eloss = new EnergyLoss[maxShapes];
-	MultScatter = new MCS[maxShapes];
-
-	minfeaturesize = featuresize;
+		minfeaturesize = featuresize;
     }
 
     public int getNshapes() { return nshapes; }
 
     public int AddCuboid(double x0, double y0, double z0,
-			 double x1, double y1, double z1,
-			 double rho, double Z, double A)
-    {
-	if (nshapes >= maxShapes) {
-	    return -1;
-	}
+    		double x1, double y1, double z1,
+			 double rho, double Z, double A) {
+		if (nshapes >= maxShapes) {
+		    return -1;
+		}
+		
+		type[nshapes] = 1;
+		shapes[nshapes] = new double[6];
+		shapes[nshapes][0] = x0;
+		shapes[nshapes][1] = y0;
+		shapes[nshapes][2] = z0;
+		shapes[nshapes][3] = x1;
+		shapes[nshapes][4] = y1;
+		shapes[nshapes][5] = z1;
 	
-	type[nshapes] = 1;
-	shapes[nshapes] = new double[6];
-	shapes[nshapes][0] = x0;
-	shapes[nshapes][1] = y0;
-	shapes[nshapes][2] = z0;
-	shapes[nshapes][3] = x1;
-	shapes[nshapes][4] = y1;
-	shapes[nshapes][5] = z1;
-
-	rho_Z_A[nshapes][0] = rho;
-	rho_Z_A[nshapes][1] = Z;
-	rho_Z_A[nshapes][2] = A;
-
-
-	Eloss[nshapes] = new EnergyLoss(rho, Z, A);
-	MultScatter[nshapes] = new MCS(rho, Z, A);
-
-	nshapes++;
-	return (nshapes-1);
+		rho_Z_A[nshapes][0] = rho;
+		rho_Z_A[nshapes][1] = Z;
+		rho_Z_A[nshapes][2] = A;
+	
+	
+		Eloss[nshapes] = new EnergyLoss(rho, Z, A);
+		MultScatter[nshapes] = new MCS(rho, Z, A, z1-z0);
+	
+		nshapes++;
+		return (nshapes-1);
+    }
+    
+    public int AddDisk(double x0, double y0, double z0, double outerRadius, double innerRadius, double thickness,
+			 double rho, double Z, double A) {
+		if (nshapes >= maxShapes) {
+		    return -1;
+		}
+		
+		type[nshapes] = 2;
+		shapes[nshapes] = new double[6];
+		shapes[nshapes][0] = x0;
+		shapes[nshapes][1] = y0;
+		shapes[nshapes][2] = z0;
+		shapes[nshapes][3] = outerRadius;
+		shapes[nshapes][4] = innerRadius;
+		shapes[nshapes][5] = thickness;
+	
+		rho_Z_A[nshapes][0] = rho;
+		rho_Z_A[nshapes][1] = Z;
+		rho_Z_A[nshapes][2] = A;
+	
+	
+		Eloss[nshapes] = new EnergyLoss(rho, Z, A);
+		MultScatter[nshapes] = new MCS(rho, Z, A, thickness);
+	
+		nshapes++;
+		return (nshapes-1);
     }
     
     public void Print()
@@ -114,6 +139,27 @@ class Geometry
 		     && x <= shapes[id][3]
 		     && y <= shapes[id][4]
 		     && z <= shapes[id][5] );
+	}
+	
+	if (type[id] == 2) {
+	    // disk
+		double x0 = shapes[id][0];
+		double y0 = shapes[id][1];
+		double z0 = shapes[id][2];
+		double outerR = shapes[id][3];
+		double innerR = shapes[id][4];
+		double thickness = shapes[id][5];
+	    
+	    if((Math.pow(x-x0,2)+Math.pow(y-y0,2)) <= Math.pow(outerR, 2)) {
+	    	//If we are in the x-y plane of the whole disk.
+	    	if((Math.pow(x-x0,2)+Math.pow(y-y0,2)) >= Math.pow(innerR, 2)) {
+	    		//If we are outside of the inner hollow ring.
+	    		if((z >= z0) && (z <= z0+thickness) ){
+	    			//Check if in the thickness of detector in the z-plane.
+	    			return true;
+	    		}
+	    	}	
+	    }
 	}
 	
 	return false;
