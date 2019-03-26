@@ -4,29 +4,24 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
 import graphs.Graph;
+import tracker.Event;
 import tracker.EventSimulation;
 import tracker.Particle;
+import utils.EventsReader;
+import utils.FindNearestPoint;
+import utils.Histogram;
+import utils.StraightLineFactory;
 
 
 public class EventsTest {
 
 	public static void main(String[] args) throws Exception {
+		//Import CSV file and select event to graph.
 		EventsReader events = new EventsReader();
-		
-//		Histogram hist = new Histogram(50, 0, 20, "Decay Length");
-//		
-//		for(Event event : events.events) {
-//			hist.fill(event.decayLength);
-//		}
-//		
-//		hist.writeToDisk("decay_lengths.csv");
-		
-		Particle[] particles = new Particle[1];
-		particles[0] = new Particle(13, new double[]{0,0,0,0}, new double[]{20,20,400}, 10000);
-				
-		Event event = events.events.get(1);
+		Event event = events.events.get(111);
 		EventSimulation sim = new EventSimulation(event.getParticles());
 		
+		//Fit straight lines to points - and check if sufficient data to fit one.
 		ArrayList<StraightLineFactory> factories = new ArrayList<StraightLineFactory>(); 
 		
 		for(ArrayList<RealVector> v : sim.detections) {
@@ -38,6 +33,7 @@ public class EventsTest {
 			}
 		}
 		
+		//Setup up line data to graph.
 		int n = factories.size();
 		RealVector[] a = new RealVector[n];
 		RealVector[] d = new RealVector[n];
@@ -50,6 +46,7 @@ public class EventsTest {
 			d[i] = line.getDirectionVector();
 		}
 		
+		//Setup simulated line data.
 		RealVector[][] simLines = new RealVector[sim.Particles_sim.length][];
 		for(int i = 0; i < sim.Particles_sim.length; i++) {
 			Particle p = sim.Particles_sim[i];
@@ -61,14 +58,15 @@ public class EventsTest {
 			}
 		}
 		
+		//Find the nearest point to all lines.
 		FindNearestPoint p = new FindNearestPoint(a, d, 3);
 		
 		System.out.println("Sim pos: "+p.getPoint().mapMultiply(1000)+" mm");
 		System.out.println("True pos: "+event.getPositionVector()+" mm");
+		
+		//Produce graphs
 		new Graph("Detections", lines, a, d);
 		new Graph("Track Path", simLines, null,null);
-		
-		
 		
 	}
 

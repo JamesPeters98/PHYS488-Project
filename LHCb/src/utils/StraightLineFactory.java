@@ -1,3 +1,4 @@
+package utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -56,10 +57,10 @@ public class StraightLineFactory {
 		//Calculate Eigenvectors and Eigenvalues.
 		ed = new EigenDecomposition(XPX);
 		
-		if(!isValid()) System.out.println("Invalid line!!!");
-		System.out.println("Direction Vector | "+getDirectionVector());
-		System.out.println("Origin Vector    | "+getOriginVector());	
-		System.out.println("------------------------------------------");	
+//		if(!isValid()) System.out.println("Invalid line!!!");
+//		System.out.println("Direction Vector | "+getDirectionVector());
+//		System.out.println("Origin Vector    | "+getOriginVector());	
+//		System.out.println("------------------------------------------");	
 
 	}
 	

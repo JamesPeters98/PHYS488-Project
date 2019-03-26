@@ -16,8 +16,8 @@ public class EventSimulation {
     static Scanner keyboard = new Scanner(System.in);
 
     // maximum allowed number of steps before simulation is aborted
-    static final int numSteps = 10000;
-    static final double simTime = 1e-8;
+    static final int numSteps = 1000;
+    static final double simTime = 1e-9;
     
     public ArrayList<ArrayList<RealVector>> detections;
     public Particle [] Particles_sim;
@@ -38,13 +38,13 @@ public class EventSimulation {
 	 		particleTracker tracker = new particleTracker(particles[ip], simTime, numSteps);
 	
 	 		// some output (need to disable before running large numbers of events!)
-	 		System.out.println("Simulating particle " + ip);
+	 		//System.out.println("Simulating particle " + ip);
 	 		//particles[ip].print();
 	
 	 		Particles_sim[ip] = tracker.track(Experiment);
  	    }
  	    
- 	   Particles_sim[0].DumpTXYZPxPyPz("outputs/sample.csv");
+ 	   //Particles_sim[0].DumpTXYZPxPyPz("outputs/sample.csv");
  	    
  	    // simulate detection of each particle in each element
 	    Particle [] Particles_det = Experiment.detectParticles(Particles_sim);
@@ -52,11 +52,11 @@ public class EventSimulation {
 	    for(int j =0; j<Particles_det.length; j++) {
 	    	Particle p = Particles_det[j];
 	    	ArrayList<RealVector> detection = new ArrayList<RealVector>();
-	    	System.out.println(p.getParticleName()+p.getCharge());
+	    	//System.out.println(p.getParticleName()+p.getCharge());
 	    	for(int i = 1; i < 20; i++) {
 	    		double[] pos = p.getPosition(i);
 	    		if(pos[0] != 0) detection.add(new ArrayRealVector(new double[] {pos[1],pos[2],pos[3]}));
-	    		System.out.println(Arrays.toString(p.getPosition(i)));
+	    		//System.out.println(Arrays.toString(p.getPosition(i)));
 	    	}
 	    	detections.add(detection);
 	    }
@@ -75,7 +75,7 @@ public class EventSimulation {
 	// * then add one block of iron: 0.3x0.3 m^2 wide in x,y-direction, ironThickness cm thick in z-direction
 	// * then add two thin (1mm) "silicon detectors" 10cm and 20cm after the iron block
 
-	Geometry Experiment = new Geometry(randGen, 0.0000001);
+	Geometry Experiment = new Geometry(randGen, 0.0001);
 	
 	
 	
@@ -91,13 +91,13 @@ public class EventSimulation {
 
 	
 	for(int i = 0; i < detectors; i++) {
-//		Experiment.AddDisk(0, 0, i*(detectorThickness+spacing),
+//		Experiment.AddDisk(0, 0, i*(spacing),
 //			     0.042, 0.008, detectorThickness,
 //			     2.33, 14, 28.085);
 		Experiment.AddCuboid(-0.024, -0.024, i*(spacing), 0.024, 0.024, i*(spacing)+detectorThickness, 2.33, 14, 28.085);
 	}
 	
-	Experiment.Print();
+	//Experiment.Print();
 
 	return Experiment;
     }

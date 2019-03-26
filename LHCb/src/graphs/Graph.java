@@ -91,8 +91,6 @@ public class Graph extends JFrame {
         return chart;    
     }
     
-  
-    
     /**
      * Returns a panel containing the content for the demo.  This method is
      * used across all the individual demo applications to allow aggregation 

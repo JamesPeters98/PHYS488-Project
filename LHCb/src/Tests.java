@@ -3,7 +3,9 @@ import java.util.Random;
 import org.apache.commons.math3.linear.RealVector;
 
 import graphs.Graph;
+import utils.FindNearestPoint;
 import utils.SimulateSmearing;
+import utils.StraightLineFactory;
 import utils.Utils;
 
 public class Tests {

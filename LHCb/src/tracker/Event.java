@@ -1,9 +1,8 @@
+package tracker;
 import java.util.Arrays;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-
-import tracker.Particle;
 
 public class Event {
 	
@@ -64,12 +63,12 @@ public class Event {
 	/**
 	 * @param n - particle number
 	 * @param id - PDG id of the particle
-	 * @param px - x momentum of the particle.
-	 * @param py - y momentum of the particle.
-	 * @param pz - z momentum of the particle.
+	 * @param px - x momentum of the particle. (GeV)
+	 * @param py - y momentum of the particle. (GeV)
+	 * @param pz - z momentum of the particle. (GeV)
 	 */
 	public void setParticleMomentum(int n, int id, double px, double py, double pz) {
-		momentums[n] = new double[] {id,px,py,pz};
+		momentums[n] = new double[] {id,1000*px,1000*py,1000*pz};
 	}
 	
 	public void print() {

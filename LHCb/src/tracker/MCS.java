@@ -9,7 +9,7 @@ public class MCS {
 		this.Z = Z;
 		this.A = A;
 		this.thickness = thickness;
-		System.out.println("X0: "+getX0()+"m");
+		//System.out.println("X0: "+getX0()+"m");
 	}
 
 	//returns X0 in m.
@@ -30,8 +30,7 @@ public class MCS {
 		
 		double t = Math.abs((13.6/(B*mom))*z*Math.sqrt(x/X0)*(1+0.038*Math.log(x/X0)));
 		
-		//if(x==0) t = 0;
-		System.out.println("Theta: "+t+", x:"+x+", B:"+B+", mom:"+mom+", X0:"+X0);
+		//System.out.println("Theta: "+t+", x:"+x+", B:"+B+", mom:"+mom+", X0:"+X0);
 		
 		return t;
 
