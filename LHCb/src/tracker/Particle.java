@@ -50,11 +50,11 @@ public class Particle
         
 	if (ptype == 13) {
 		pName = "muon";
-	    m0 = 0.51099895;
+	    m0 = 105.658;
 	    charge = -1;
 	} else if (ptype == -13) {
 		pName = "muon";
-	    m0 = 0.51099895;
+	    m0 = 105.658;
 	    charge = 1;
 	} else if (ptype == 211) {
 		pName = "pion";
