@@ -18,6 +18,8 @@ public class EventDecayLengths {
 
 	public static void main(String[] args) throws Exception {
 		
+		long time = System.currentTimeMillis();
+		
 		//Set up Histogram.
 		Histogram hist = new Histogram(50, 0, 20, "Decay Lengths");
 		
@@ -28,8 +30,7 @@ public class EventDecayLengths {
 		int size = events.events.size();
 		//Loop over every event
 		for(int n=0; n<size; n++){
-			Event event = events.events.get(0);
-			events.events.remove(0);
+			Event event = events.events.get(n);
 			
 			if (n % 10 == 0) {
 				System.out.println("Events size: "+events.events.size());
@@ -69,10 +70,20 @@ public class EventDecayLengths {
 			//Add point to histogram.
 			hist.fill(p.getPoint().getNorm()*1000);	
 			
+			event.setForRemoval();
+			sim = null;
+			p = null;
+			factories = null;
+			
+			//System.gc();
 		}
 			
 		//Write histogram to disk
 		hist.writeToDisk("decay_lengths.csv");
+		
+		long finalTime = System.currentTimeMillis();
+		
+		System.out.println("Time taken: "+(finalTime-time)/1000+"s");
 
 	}
 

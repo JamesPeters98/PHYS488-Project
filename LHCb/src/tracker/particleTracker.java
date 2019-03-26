@@ -12,7 +12,7 @@ public class particleTracker
     private Particle output;
 
     //Constants
-    static final double c = 3e8; // speed of light in m/s
+    final double c = 3e8; // speed of light in m/s
     
     public particleTracker(Particle particle, double Tmax, int N)
     {

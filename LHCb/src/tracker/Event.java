@@ -6,6 +6,7 @@ import org.apache.commons.math3.linear.RealVector;
 
 public class Event {
 	
+	private int id;
 	protected double x,y,z; //True x,y,z;
 	protected RealVector positionVector;
 	
@@ -18,9 +19,10 @@ public class Event {
 	/**
 	 * @param particles - number of particles in system.
 	 */
-	public Event(int particles) {
-		momentums = new double[particles][];
+	public Event(int id, int particles) {
+		this.momentums = new double[particles][];
 		this.particles = new Particle[particles-1];
+		this.id = id;
 	}
 	
 	
@@ -89,7 +91,22 @@ public class Event {
 		}
 		return particles;
 	}
+
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
 	
+	//Remove unneeded data when we are done with it.
+	public void setForRemoval() {
+		this.momentums = null;
+		this.particles = null;
+	}
 	
 
 }

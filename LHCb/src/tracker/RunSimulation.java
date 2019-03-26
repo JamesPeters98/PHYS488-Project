@@ -2,6 +2,7 @@ package tracker;
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -47,7 +48,7 @@ class RunSimulation
     //      Particles_gen and Particles_sim are unknown
 
     
-    static Random randGen = new Random();
+    static ThreadLocalRandom randGen = ThreadLocalRandom.current();
     static Scanner keyboard = new Scanner(System.in);
 
     // maximum allowed number of steps before simulation is aborted

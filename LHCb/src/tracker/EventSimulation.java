@@ -2,6 +2,7 @@ package tracker;
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class EventSimulation {   
-    Random randGen = new Random();
+    ThreadLocalRandom randGen;
     Scanner keyboard = new Scanner(System.in);
 
     // maximum allowed number of steps before simulation is aborted
@@ -24,7 +25,7 @@ public class EventSimulation {
     
     public EventSimulation(Particle[] particles) throws IOException {
     	detections = new ArrayList<ArrayList<RealVector>>();
-    	
+    	randGen = ThreadLocalRandom.current();
     	//randGen.setSeed(7894694);
     	
     	// Define the genotrical properties of the experiment
@@ -42,6 +43,7 @@ public class EventSimulation {
 	 		//particles[ip].print();
 	
 	 		Particles_sim[ip] = tracker.track(Experiment);
+	 		tracker = null;
  	    }
  	    
  	   //Particles_sim[0].DumpTXYZPxPyPz("outputs/sample.csv");
@@ -75,7 +77,7 @@ public class EventSimulation {
 	// * then add one block of iron: 0.3x0.3 m^2 wide in x,y-direction, ironThickness cm thick in z-direction
 	// * then add two thin (1mm) "silicon detectors" 10cm and 20cm after the iron block
 
-	Geometry Experiment = new Geometry(randGen, 0.0001);
+	Geometry Experiment = new Geometry(randGen, 0.00001);
 	
 	
 	

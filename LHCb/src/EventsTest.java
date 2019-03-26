@@ -18,7 +18,7 @@ public class EventsTest {
 	public static void main(String[] args) throws Exception {
 		//Import CSV file and select event to graph.
 		EventsReader events = new EventsReader();
-		Event event = events.events.get(111);
+		Event event = events.events.get(114);
 		EventSimulation sim = new EventSimulation(event.getParticles());
 		
 		//Fit straight lines to points - and check if sufficient data to fit one.

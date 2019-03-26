@@ -18,8 +18,10 @@ public class EventsReader {
 		Scanner scanner = new Scanner(new File("b0vectors1.csv"));
         scanner.useDelimiter("\\s*Next...\\s*");
         
+        int id = 0;
         //Loop over every event in the CSV.
         while(scanner.hasNext()){
+        	id++;
         	//Split each event into their rows.
             Scanner event = new Scanner(scanner.next());
             event.useDelimiter("\n ");
@@ -28,7 +30,7 @@ public class EventsReader {
             ArrayList<Double> data = new ArrayList<Double>();
             
             //Create event with 5 particles - B0, two muons and two pions.
-            Event e = new Event(5);
+            Event e = new Event(id,5);
             
             //Read data from each row and create array for each event.
             while(event.hasNext()) {
