@@ -24,14 +24,16 @@ public class EventDecayLengths {
 		//Import CSV file and select event to graph.
 		EventsReader events = new EventsReader();
 		
-		int eventN = 0;
+		System.out.println("Events size: "+events.events.size());
+		int size = events.events.size();
 		//Loop over every event
-		for(Event event : events.events){
-			eventN++;
+		for(int n=0; n<size; n++){
+			Event event = events.events.get(0);
+			events.events.remove(0);
 			
-			System.out.println("Simulating event " + eventN);
-			if (eventN % 100 == 0) {
-				System.out.println("Simulating event " + eventN);
+			if (n % 10 == 0) {
+				System.out.println("Events size: "+events.events.size());
+				System.out.println("Simulating event " + n);
 			}
 			
 			//Create simulation for all particles in event.
@@ -49,10 +51,10 @@ public class EventDecayLengths {
 			}
 				
 			//Setup up line data to solve for nearest point.
-			int n = factories.size();
-			RealVector[] a = new RealVector[n];
-			RealVector[] d = new RealVector[n];
-			RealVector[][] lines = new RealVector[n][];	
+			int n2 = factories.size();
+			RealVector[] a = new RealVector[n2];
+			RealVector[] d = new RealVector[n2];
+			RealVector[][] lines = new RealVector[n2][];	
 				
 			for(int i = 0; i < factories.size(); i++) {
 				StraightLineFactory line = factories.get(i);
@@ -65,7 +67,8 @@ public class EventDecayLengths {
 			FindNearestPoint p = new FindNearestPoint(a, d, 3);
 
 			//Add point to histogram.
-			hist.fill(p.getPoint().getNorm());
+			hist.fill(p.getPoint().getNorm()*1000);	
+			
 		}
 			
 		//Write histogram to disk

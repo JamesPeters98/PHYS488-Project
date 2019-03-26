@@ -12,12 +12,12 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class EventSimulation {   
-    static Random randGen = new Random();
-    static Scanner keyboard = new Scanner(System.in);
+    Random randGen = new Random();
+    Scanner keyboard = new Scanner(System.in);
 
     // maximum allowed number of steps before simulation is aborted
-    static final int numSteps = 1000;
-    static final double simTime = 1e-9;
+    final int numSteps = 1000;
+    final double simTime = 1e-9;
     
     public ArrayList<ArrayList<RealVector>> detections;
     public Particle [] Particles_sim;
@@ -63,12 +63,12 @@ public class EventSimulation {
     }
     
 
-    public static double smear(double resolution) {
+    public double smear(double resolution) {
     	return randGen.nextGaussian()*resolution;
     }
 
     
-    public static Geometry SetupExperiment ()
+    public Geometry SetupExperiment ()
     {
 	// example setup the experiment:
 	// * first line defines the size of the experiment in vacuum
