@@ -20,12 +20,15 @@ public class EventSimulation {
     final int numSteps = 1000;
     final double simTime = 1e-9;
     
+    double resolution;
+    
     public ArrayList<ArrayList<RealVector>> detections;
     public Particle [] Particles_sim;
     
-    public EventSimulation(Particle[] particles) throws IOException {
+    public EventSimulation(Particle[] particles, double smear) throws IOException {
     	detections = new ArrayList<ArrayList<RealVector>>();
     	randGen = ThreadLocalRandom.current();
+    	resolution = smear;
     	//randGen.setSeed(7894694);
     	
     	// Define the genotrical properties of the experiment
@@ -57,7 +60,7 @@ public class EventSimulation {
 	    	//System.out.println(p.getParticleName()+p.getCharge());
 	    	for(int i = 1; i < 20; i++) {
 	    		double[] pos = p.getPosition(i);
-	    		if(pos[0] != 0) detection.add(new ArrayRealVector(new double[] {pos[1],pos[2],pos[3]}));
+	    		if(pos[0] != 0) detection.add(new ArrayRealVector(new double[] {pos[1]+smear(resolution),pos[2]+smear(resolution),pos[3]+smear(resolution)}));
 	    		//System.out.println(Arrays.toString(p.getPosition(i)));
 	    	}
 	    	detections.add(detection);

@@ -31,6 +31,7 @@ public class EventsReader {
             
             //Create event with 5 particles - B0, two muons and two pions.
             Event e = new Event(id,5);
+            //System.out.println("Settings up event: "+id);
             
             //Read data from each row and create array for each event.
             while(event.hasNext()) {
@@ -54,6 +55,8 @@ public class EventsReader {
         		e.setParticleMomentum(i+1, data.get(n+3).intValue(), data.get(n),data.get(n+1), data.get(n+2));
         		n = n + 4;
         	}
+        	
+        	e.setup();
    
         	//Add event to array and close scanner.
         	events.add(e);         

@@ -26,6 +26,15 @@ public class Event {
 	}
 	
 	
+	public void setup() {
+		//Convert to m!!
+		double[] pos0 = new double[] {0,0.001*x,0.001*y,0.001*z};
+		for(int i = 0; i < momentums.length-1; i++) {
+			double[] mom = new double[] {momentums[i][1],momentums[i][2],momentums[i][3]};
+			this.particles[i] = new Particle((int) momentums[i+1][0],pos0, mom,1000);
+		}
+	}
+	
 	/**
 	 * @param x - true x position.
 	 * @param y	- true y position.
@@ -83,12 +92,6 @@ public class Event {
 	}
 	
 	public Particle[] getParticles() {
-		//Convert to m!!
-		double[] pos0 = new double[] {0,0.001*x,0.001*y,0.001*z};
-		for(int i = 0; i < momentums.length-1; i++) {
-			double[] mom = new double[] {momentums[i][1],momentums[i][2],momentums[i][3]};
-			this.particles[i] = new Particle((int) momentums[i+1][0],pos0, mom,100000);
-		}
 		return particles;
 	}
 

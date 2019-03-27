@@ -20,33 +20,34 @@ import utils.StraightLineFactory;
 public class EventDecayLengthsParallel {
 	
 	static int n = 0;
+	static double smear = 0.0001;
 
 	public static void main(String[] args) throws Exception {
 		
 		long time = System.currentTimeMillis();
 		
+		System.out.println("Calculating Decay Lengths...");
 		//Set up Histogram.
-		Histogram hist = new Histogram(50, 0, 20, "Decay Lengths");
+		Histogram hist = new Histogram(25, 0, 0.5, "Decay Lengths");
 		
 		//Import CSV file and select event to graph.
 		EventsReader events = new EventsReader();
 		
 		System.out.println("Events size: "+events.events.size());
 		
-		ExecutorService service = Executors.newFixedThreadPool(4);
-//		ExecutorService service = Executors.newCachedThreadPool();
+		ExecutorService service = Executors.newCachedThreadPool();
 		
-		//System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "4");
 		//Loop over every event
 		events.events.forEach(event -> {
 			service.execute(() -> {
 			try {	
 				
-				if(event.getId() % 10 == 0)
-				System.out.println("Simulating event " + event.getId());
+				n++;
+				if(n % 10 == 0)
+				System.out.println("Simulating event "+n+"/"+events.events.size());
 				
 				//Create simulation for all particles in event.
-				EventSimulation sim = new EventSimulation(event.getParticles());
+				EventSimulation sim = new EventSimulation(event.getParticles(),smear);
 					
 				//Fit straight lines to points - and check if sufficient data to fit one.
 				ArrayList<StraightLineFactory> factories = new ArrayList<StraightLineFactory>(); 				
@@ -76,13 +77,13 @@ public class EventDecayLengthsParallel {
 				FindNearestPoint p = new FindNearestPoint(a, d, 3);
 	
 				//Add point to histogram.
-				hist.fill(p.getPoint().getNorm()*1000);	
+				hist.fill(p.getPoint().getNorm()*1000-event.getPositionVector().getNorm());	
 				
 				event.setForRemoval();
 				sim = null;
 				p = null;
 				factories = null;
-				System.gc();
+				//events.events.remove(event);
 			} catch(Exception e) {
 				
 			}
@@ -97,7 +98,7 @@ public class EventDecayLengthsParallel {
 		}
 			
 		//Write histogram to disk
-		hist.writeToDisk("decay_lengths.csv");
+		hist.writeToDisk("smearing_effects.csv");
 		
 		long finalTime = System.currentTimeMillis();
 		

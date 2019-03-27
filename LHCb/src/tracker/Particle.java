@@ -18,27 +18,7 @@ public class Particle
     private int laststep; // how many steps the particle has made
 
     // constructor to initialise the particle
-    // and make space to store the trajectory
-//    public Particle(String particleType, double [] position0, double [] momentum0, int maxSteps)
-//    {
-//        position = new double[maxSteps+1][4];
-//        momentum = new double[maxSteps+1][3];
-//        laststep = 0;
-//        position[0] = position0;
-//        momentum[0] = momentum0;
-//        ptype = particleType;
-//	if (ptype == "electron") {
-//	    m0 = 0.51099895;
-//	    charge = -1;
-//	} else if (ptype == "muon") {
-//	    m0 = 105.658;
-//	    charge = -1;
-//	} else if (ptype == "proton") {
-//	    m0 = 938.27231;
-//	    charge = 1;
-//	}
-//    }
-    
+    // and make space to store the trajectory  
     public Particle(int PDGid, double [] position0, double [] momentum0, int maxSteps)
     {
         position = new double[maxSteps+1][4];

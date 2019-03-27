@@ -47,6 +47,9 @@ public class FindNearestPoint {
 		solution = g.getSolution();
 	}
 	
+	/**
+	 * @return RealVector of true position in metres.
+	 */
 	public RealVector getPoint() {
 		return solution;
 	}
