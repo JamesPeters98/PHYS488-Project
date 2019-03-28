@@ -2,6 +2,7 @@ package simulations;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
+import flanagan.analysis.Regression;
 import tracker.Event;
 import tracker.EventSimulation;
 import tracker.Particle;
@@ -20,7 +22,7 @@ import utils.StraightLineFactory;
 public class EventDecayLengthsParallel {
 	
 	static int n = 0;
-	static double smear = 0.0001;
+	static double smear = 0.000001;
 
 	public static void main(String[] args) throws Exception {
 		
@@ -28,7 +30,7 @@ public class EventDecayLengthsParallel {
 		
 		System.out.println("Calculating Decay Lengths...");
 		//Set up Histogram.
-		Histogram hist = new Histogram(25, 0, 0.5, "Decay Lengths");
+		Histogram hist = new Histogram(50, 0, 0.5, "Decay Lengths");
 		
 		//Import CSV file and select event to graph.
 		EventsReader events = new EventsReader();
@@ -98,7 +100,11 @@ public class EventDecayLengthsParallel {
 		}
 			
 		//Write histogram to disk
-		hist.writeToDisk("smearing_effects.csv");
+		//hist.writeToDisk("smearing_effects.csv");
+		
+		Regression reg = new Regression(hist.getX(),hist.getContent(),hist.getError());
+		reg.exponentialSimple();
+		System.out.println(Arrays.toString(reg.getBestEstimates()));
 		
 		long finalTime = System.currentTimeMillis();
 		

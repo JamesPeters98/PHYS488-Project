@@ -79,11 +79,28 @@ public class Histogram
 	// returns the contents on bin 'nbin' to the user
 	return sumWeights[nbin];
     }
+    
+    public double[] getContent() {
+    	return sumWeights;
+    }
 
     public double getError(int nbin)
     {
 	// returns the error on bin 'nbin' to the user
 	return Math.sqrt(sumWeights[nbin]);
+    }
+    
+    public double[] getError() {
+    	double[] error = new double[sumWeights.length];
+    	for(int i = 0; i < sumWeights.length; i++) {
+    		if(sumWeights[i]==0) error[i] = 1;
+    		else error[i] = Math.sqrt(sumWeights[i]);
+    	}
+    	return error;
+    }
+    
+    public double[] getX() {
+    	return binCentre;
     }
     
     //-------------------------------------
