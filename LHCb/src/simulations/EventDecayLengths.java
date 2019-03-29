@@ -38,11 +38,11 @@ public class EventDecayLengths {
 			}
 			
 			//Create simulation for all particles in event.
-			EventSimulation sim = new EventSimulation(event.getParticles(),0);
+			EventSimulation sim = new EventSimulation(event.getParticles(),event.getPositionVector());
 				
 			//Fit straight lines to points - and check if sufficient data to fit one.
 			ArrayList<StraightLineFactory> factories = new ArrayList<StraightLineFactory>(); 				
-			for(ArrayList<RealVector> v : sim.detections) {
+			for(ArrayList<RealVector> v : sim.getDetections()) {
 				if(!v.isEmpty()) { 
 					StraightLineFactory line = new StraightLineFactory(v);
 					if(line.isValid()) {
