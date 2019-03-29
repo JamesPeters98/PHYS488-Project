@@ -19,16 +19,15 @@ public class EventSimulation {
     // maximum allowed number of steps before simulation is aborted
     final int numSteps = 1000;
     final double simTime = 1e-9;
-    
-    double resolution;
-    
-    public ArrayList<ArrayList<RealVector>> detections;
+        
+    private ArrayList<ArrayList<RealVector>> detections;
+    private RealVector truePos;
     public Particle [] Particles_sim;
     
-    public EventSimulation(Particle[] particles, double smear) throws IOException {
+    public EventSimulation(Particle[] particles, RealVector truePos) {
+    	this.truePos = truePos;
     	detections = new ArrayList<ArrayList<RealVector>>();
     	randGen = ThreadLocalRandom.current();
-    	resolution = smear;
     	//randGen.setSeed(7894694);
     	
     	// Define the genotrical properties of the experiment
@@ -57,18 +56,37 @@ public class EventSimulation {
 	    for(int j =0; j<Particles_det.length; j++) {
 	    	Particle p = Particles_det[j];
 	    	ArrayList<RealVector> detection = new ArrayList<RealVector>();
-	    	//System.out.println(p.getParticleName()+p.getCharge());
 	    	for(int i = 1; i < 20; i++) {
 	    		double[] pos = p.getPosition(i);
-	    		if(pos[0] != 0) detection.add(new ArrayRealVector(new double[] {pos[1]+smear(resolution),pos[2]+smear(resolution),pos[3]+smear(resolution)}));
-	    		//System.out.println(Arrays.toString(p.getPosition(i)));
+	    		if(pos[0] != 0) detection.add(new ArrayRealVector(new double[] {pos[1],pos[2],pos[3]}));
 	    	}
 	    	detections.add(detection);
 	    }
     }
     
+    public ArrayList<ArrayList<RealVector>> getSmearedDetections(double smear){
+    	ArrayList<ArrayList<RealVector>> newDetections = new ArrayList<ArrayList<RealVector>>();
+    	for(ArrayList<RealVector> detection : detections) {
+    		ArrayList<RealVector> newDetection = new ArrayList<RealVector>();
+    		for(RealVector v : detection) {
+    			RealVector vNew = new ArrayRealVector(new double[] {v.getEntry(0)+smear(smear),v.getEntry(1)+smear(smear),v.getEntry(2)+smear(smear)});
+    			newDetection.add(vNew);
+    		}
+    		newDetections.add(newDetection);
+    	}
+    	return newDetections;
+    }
+    
+    public ArrayList<ArrayList<RealVector>> getDetections(){
+    	return detections;
+    }
+    
+    public RealVector getTruePosition() {
+    	return truePos;
+    }
+    
 
-    public double smear(double resolution) {
+    private double smear(double resolution) {
     	return randGen.nextGaussian()*resolution;
     }
 

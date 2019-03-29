@@ -19,12 +19,12 @@ public class EventsTest {
 		//Import CSV file and select event to graph.
 		EventsReader events = new EventsReader();
 		Event event = events.events.get(114);
-		EventSimulation sim = new EventSimulation(event.getParticles(),0);
+		EventSimulation sim = new EventSimulation(event.getParticles(),event.getPositionVector());
 		
 		//Fit straight lines to points - and check if sufficient data to fit one.
 		ArrayList<StraightLineFactory> factories = new ArrayList<StraightLineFactory>(); 
 		
-		for(ArrayList<RealVector> v : sim.detections) {
+		for(ArrayList<RealVector> v : sim.getDetections()) {
 			if(!v.isEmpty()) { 
 				StraightLineFactory line = new StraightLineFactory(v);
 				if(line.isValid()) {

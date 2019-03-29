@@ -1,19 +1,15 @@
 package simulations;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
 import flanagan.analysis.Regression;
-import tracker.Event;
 import tracker.EventSimulation;
-import tracker.Particle;
 import utils.EventsReader;
 import utils.FindNearestPoint;
 import utils.Histogram;
@@ -22,7 +18,7 @@ import utils.StraightLineFactory;
 public class EventDecayLengthsParallel {
 	
 	static int n = 0;
-	static double smear = 0.000001;
+	static double smear = 0;
 
 	public static void main(String[] args) throws Exception {
 		
@@ -49,11 +45,11 @@ public class EventDecayLengthsParallel {
 				System.out.println("Simulating event "+n+"/"+events.events.size());
 				
 				//Create simulation for all particles in event.
-				EventSimulation sim = new EventSimulation(event.getParticles(),smear);
+				EventSimulation sim = new EventSimulation(event.getParticles(),event.getPositionVector());
 					
 				//Fit straight lines to points - and check if sufficient data to fit one.
 				ArrayList<StraightLineFactory> factories = new ArrayList<StraightLineFactory>(); 				
-				for(ArrayList<RealVector> v : sim.detections) {
+				for(ArrayList<RealVector> v : sim.getSmearedDetections(smear)) {
 					if(!v.isEmpty()) { 
 						StraightLineFactory line = new StraightLineFactory(v);
 						if(line.isValid()) {
@@ -104,6 +100,7 @@ public class EventDecayLengthsParallel {
 		
 		Regression reg = new Regression(hist.getX(),hist.getContent(),hist.getError());
 		reg.exponentialSimple();
+		reg.exponentialSimplePlot();
 		System.out.println(Arrays.toString(reg.getBestEstimates()));
 		
 		long finalTime = System.currentTimeMillis();
