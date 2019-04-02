@@ -12,6 +12,9 @@ public class Simulate {
 	static HashMap<Double,Double> decayLengths = new HashMap<Double, Double>();
 	static HashMap<Double,Double> decayLengthErrors = new HashMap<Double, Double>();
 	static boolean allSimsComplete = false;
+	
+	static double trueDecayLength;
+	static double trueDecayLengthError;
 
 	public static void main(String[] args) throws Exception {		
 		double s1 = 0.01;
@@ -19,7 +22,12 @@ public class Simulate {
 		int n = 200;
 		
 		DecayLengthSim sim = new DecayLengthSim();
-		while(!sim.allTasksComplete())
+		while(!sim.allTasksComplete());
+			
+		double[] trueR = sim.calculateRegression(0);
+		trueDecayLength = trueR[0];
+		trueDecayLengthError = trueR[1];
+		System.out.println("True Decay Length:"+trueDecayLength);
 		
 		for(int i=0; i<n; i++) {
 			double smear = s1*Math.pow(10, -i*pow);
@@ -34,16 +42,21 @@ public class Simulate {
 		
 		int count = 0;
 		for(Entry<Double, Double> entry : decayLengths.entrySet()){
-			xVals[count] =  -Math.log(entry.getKey());
+			xVals[count] =  -Math.log10(entry.getKey());
 		    data[count] = entry.getValue();
 		    errorBars[count] = decayLengthErrors.get(entry.getKey());
 		    count++;
 		}
 		
-		PlotGraph plot = new PlotGraph(xVals,data);	
-		plot.setErrorBars(0, errorBars);
-		plot.plot();
-		//Regression reg = new Regression(xVals, data);
+//		PlotGraph plot = new PlotGraph(xVals,data);	
+//		plot.setErrorBars(0, errorBars);
+//		plot.plot();
+		
+		Regression reg = new Regression(xVals, data);
+		reg.setTitle("Fit of Decay Length vs Natural Log of Smear Resolution");
+		reg.setXlegend("ln(x)");
+		reg.setYlegend("Decay Length (mm)");
+		reg.fiveParameterLogisticPlot(0,trueDecayLength);
 		
 		sim.service.shutdown();
 		try {

@@ -114,14 +114,14 @@ public class DecayLengthSim {
 	
 	public double[] calculateRegression(double smear) throws Exception {
 		Histogram hist = getHist(smear);
-		System.out.println(Arrays.toString(hist.getContent()));
+		//System.out.println(Arrays.toString(hist.getContent()));
 		Regression reg = new Regression(hist.getX(),hist.getContent(),hist.getError());
 		double[] result = new double[2];		
 		try {
 			reg.exponentialSimple();
 			result[0] = -reg.getBestEstimates()[0];
 			result[1] = reg.getBestEstimatesErrors()[0];
-			if(result[1] > 100 || reg.getDegFree() < 10) {
+			if(result[1] > 100 || reg.getDegFree() < 20) {
 				result[0] = 0;
 				result[1] = 0;
  			}
