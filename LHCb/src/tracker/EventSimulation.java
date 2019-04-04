@@ -7,6 +7,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
+import utils.EventsReader;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,8 +26,22 @@ public class EventSimulation {
     private RealVector truePos;
     public Particle [] Particles_sim;
     
-    public EventSimulation(Particle[] particles, RealVector truePos) {
-    	this.truePos = truePos;
+	private int detectors = 19;
+	private double detectorThickness = 0.0003;
+	private double spacing = 0.03;
+	
+	public int eventId;
+    
+    public double initialParticleBeta;
+    
+    public EventSimulation(Integer eventId) {
+    	this.eventId = eventId;
+    	Event event = EventsReader.getEvent(eventId);
+    	this.truePos = event.getPositionVector();
+    	this.initialParticleBeta = event.getInitialParticle().getBeta();
+    	Particle[] particles = event.getParticles();
+    	//System.out.println("Particle Beta: "+initialParticleBeta);
+    	
     	detections = new ArrayList<ArrayList<RealVector>>();
     	randGen = ThreadLocalRandom.current();
     	//randGen.setSeed(7894694);
@@ -47,6 +63,8 @@ public class EventSimulation {
 	 		Particles_sim[ip] = tracker.track(Experiment);
 	 		tracker = null;
  	    }
+ 	    
+ 	    particles = null;
  	    
  	   //Particles_sim[0].DumpTXYZPxPyPz("outputs/sample.csv");
  	    
@@ -91,8 +109,7 @@ public class EventSimulation {
     }
 
     
-    public Geometry SetupExperiment ()
-    {
+    public Geometry SetupExperiment () {
 	// example setup the experiment:
 	// * first line defines the size of the experiment in vacuum
 	// * then add one block of iron: 0.3x0.3 m^2 wide in x,y-direction, ironThickness cm thick in z-direction
@@ -100,30 +117,32 @@ public class EventSimulation {
 
 	Geometry Experiment = new Geometry(randGen, 0.00001);
 	
-	
-	
-	int detectors = 19;
-	double detectorThickness = 0.0003;
-	double spacing = 0.03;
-	
-//	Experiment.AddDisk(0, 0, 0,
-//		     0.1, 0, 100*(detectorThickness+spacing),
-//		     0,0,0);
-	
 	Experiment.AddCuboid(-0.024, -0.024, 0, 0.024, 0.024, 1, 0,0,0);
 
 	
 	for(int i = 0; i < detectors; i++) {
-//		Experiment.AddDisk(0, 0, i*(spacing),
-//			     0.042, 0.008, detectorThickness,
-//			     2.33, 14, 28.085);
-		Experiment.AddCuboid(-0.024, -0.024, i*(spacing), 0.024, 0.024, i*(spacing)+detectorThickness, 2.33, 14, 28.085);
+		Experiment.AddDisk(0, 0, i*(spacing),
+			     0.042, 0.008, detectorThickness,
+			     2.33, 14, 28.085);
+		//Experiment.AddCuboid(-0.024, -0.024, i*(spacing), 0.024, 0.024, i*(spacing)+detectorThickness, 2.33, 14, 28.085);
 	}
 	
 	//Experiment.Print();
 
 	return Experiment;
     }
+
+	public void setDetectors(int detectors) {
+		this.detectors = detectors;
+	}
+
+	public void setDetectorThickness(double detectorThickness) {
+		this.detectorThickness = detectorThickness;
+	}
+
+	public void setSpacing(double spacing) {
+		this.spacing = spacing;
+	}
 
 
 //    public static Particle[] GetParticles(double[] pos0, double startMomentum, double startAngle) {

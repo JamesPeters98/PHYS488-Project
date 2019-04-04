@@ -63,6 +63,8 @@ public class GaussianElimination
         }    
         
         this.solution = new ArrayRealVector(solution);
+        if(this.solution.isNaN()) this.solution = new ArrayRealVector(0);
+        	
         
         /** Print solution **/
         //printSolution(solution);

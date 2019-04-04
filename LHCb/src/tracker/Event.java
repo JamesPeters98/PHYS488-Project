@@ -6,31 +6,46 @@ import org.apache.commons.math3.linear.RealVector;
 
 public class Event {
 	
-	private int id;
+	private int id, particleNum;
 	protected double x,y,z; //True x,y,z;
 	protected RealVector positionVector;
 	
 	protected double decayTime, decayLength; //True decay time and position. time(ps) length(mm).
 	
+	public double getDecayTime() {
+		return decayTime;
+	}
+
+
+	public double getDecayLength() {
+		return decayLength;
+	}
+
 	protected double[][] momentums;
 	
 	private Particle[] particles;
+	private Particle initialParticle;
 	
 	/**
 	 * @param particles - number of particles in system.
 	 */
 	public Event(int id, int particles) {
-		this.momentums = new double[particles][];
-		this.particles = new Particle[particles-1];
 		this.id = id;
+		this.particleNum = particles;
+		this.momentums = new double[particleNum][];
+		this.particles = new Particle[particleNum-1];
 	}
 	
 	
-	public void setup() {
+	public void setup() {		
 		//Convert to m!!
 		double[] pos0 = new double[] {0,0.001*x,0.001*y,0.001*z};
+		
+		double[] momI = new double[] {momentums[0][1],momentums[0][2],momentums[0][3]};
+		initialParticle = new Particle((int) momentums[0][0],pos0, momI,1000);
+		
 		for(int i = 0; i < momentums.length-1; i++) {
-			double[] mom = new double[] {momentums[i][1],momentums[i][2],momentums[i][3]};
+			double[] mom = new double[] {momentums[i+1][1],momentums[i+1][2],momentums[i+1][3]};
 			this.particles[i] = new Particle((int) momentums[i+1][0],pos0, mom,1000);
 		}
 	}
@@ -93,6 +108,10 @@ public class Event {
 	
 	public Particle[] getParticles() {
 		return particles;
+	}
+	
+	public Particle getInitialParticle() {
+		return initialParticle;
 	}
 
 

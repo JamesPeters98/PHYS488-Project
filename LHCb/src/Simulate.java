@@ -1,11 +1,9 @@
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import flanagan.analysis.Regression;
 import flanagan.plot.PlotGraph;
-import simulations.DecayLengthSim;
+import simulations.DecayTimeSim;
 
 public class Simulate {
 	
@@ -19,9 +17,10 @@ public class Simulate {
 	public static void main(String[] args) throws Exception {		
 		double s1 = 0.01;
 		double pow = 0.05;
-		int n = 200;
+		int n = 125;
 		
-		DecayLengthSim sim = new DecayLengthSim();
+		//DecayLengthSim sim = new DecayLengthSim();
+		DecayTimeSim sim = new DecayTimeSim();
 		while(!sim.allTasksComplete());
 			
 		double[] trueR = sim.calculateRegression(0);
@@ -48,15 +47,16 @@ public class Simulate {
 		    count++;
 		}
 		
-//		PlotGraph plot = new PlotGraph(xVals,data);	
-//		plot.setErrorBars(0, errorBars);
-//		plot.plot();
+		PlotGraph plot = new PlotGr
+		PlotGraph plot = new PlotGraph(xVals,data);	
+		plot.setErrorBars(0, errorBars);
+		plot.plot();
 		
-		Regression reg = new Regression(xVals, data);
-		reg.setTitle("Fit of Decay Length vs Natural Log of Smear Resolution");
-		reg.setXlegend("ln(x)");
-		reg.setYlegend("Decay Length (mm)");
-		reg.fiveParameterLogisticPlot(0,trueDecayLength);
+//		Regression reg = new Regression(xVals, data);
+//		reg.setTitle("Fit of Decay Length vs Natural Log of Smear Resolution");
+//		reg.setXlegend("ln(x)");
+//		reg.setYlegend("Decay Length (mm)");
+//		reg.fiveParameterLogisticPlot(0,trueDecayLength);
 		
 		sim.service.shutdown();
 		try {

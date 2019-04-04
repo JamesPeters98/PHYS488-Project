@@ -28,23 +28,27 @@ public class Particle
         momentum[0] = momentum0;
         this.ptype = PDGid;
         
-	if (ptype == 13) {
-		pName = "muon";
-	    m0 = 105.658;
-	    charge = -1;
-	} else if (ptype == -13) {
-		pName = "muon";
-	    m0 = 105.658;
-	    charge = 1;
-	} else if (ptype == 211) {
-		pName = "pion";
-	    m0 = 139.57018;
-	    charge = 1;
-	} else if (ptype == -211) {
-		pName = "pion";
-	    m0 = 139.57018;
-	    charge = -1;
-	}
+		if (ptype == 13) {
+			pName = "muon";
+		    m0 = 105.658;
+		    charge = -1;
+		} else if (ptype == -13) {
+			pName = "muon";
+		    m0 = 105.658;
+		    charge = 1;
+		} else if (ptype == 211) {
+			pName = "pion";
+		    m0 = 139.57018;
+		    charge = 1;
+		} else if (ptype == -211) {
+			pName = "pion";
+		    m0 = 139.57018;
+		    charge = -1;
+		} else if ((ptype == 511)||(ptype == -511)) {
+			pName = "B0 meson";
+			m0 = 5279.61;
+		    charge = 0;
+		}
 	
     }
 

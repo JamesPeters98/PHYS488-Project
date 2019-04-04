@@ -3,16 +3,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import tracker.Event;
 
 public class EventsReader {
 	
-	public ArrayList<Event> events;
+	private static HashMap<Integer,Event> events;
 	
 	public EventsReader() throws FileNotFoundException {
-		events = new ArrayList<Event>();
+		events = new HashMap<Integer, Event>();
 		
     	//Split CSV into each event using the 'Next...' keyword.
 		Scanner scanner = new Scanner(new File("b0vectors1.csv"));
@@ -59,7 +60,7 @@ public class EventsReader {
         	e.setup();
    
         	//Add event to array and close scanner.
-        	events.add(e);         
+        	events.put(e.getId(), e);         
             event.close();
         }
         scanner.close();
@@ -73,6 +74,20 @@ public class EventsReader {
 			System.err.println("Value: "+s+" was invalid!");
 			return Double.NaN;
 		}
+	}
+	
+	public static Event getEvent(int id) {
+		return events.get(id);
+	}
+	
+	public static HashMap<Integer,Event> getEvents(){
+		return events;
+	}
+	
+	private void resetEvents() {
+		events.values().forEach(event -> {
+			event.setup();
+		});
 	}
 
 }
