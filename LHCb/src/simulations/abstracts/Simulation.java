@@ -1,4 +1,4 @@
-package simulations;
+package simulations.abstracts;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -15,7 +16,6 @@ import org.apache.commons.math3.linear.RealVector;
 
 import flanagan.analysis.Regression;
 import flanagan.plot.PlotGraph;
-import tracker.Event;
 import tracker.EventSimulation;
 import utils.EventsReader;
 import utils.FindNearestPoint;
@@ -27,16 +27,20 @@ public abstract class Simulation {
 	
 	public String name; //Simulation name.
 	public ExecutorService service;
+	public PlotGraph plot;
 	
-	private int n = 0;
-	private ArrayList<Future<EventSimulation>> eventSims;
+	protected int n = 0;
+	protected ArrayList<Future<EventSimulation>> eventSims;
 	private int simulationLoops;
-	private int currentLoop = 0;
-	private boolean simStarted = false;
+	protected int currentLoop = 0;
+	protected boolean simStarted = false;
 	private double histStart, histEnd;
 	private int bins;
+	
+	public double smear = 0;
 		
 	public Simulation(String name, int simulationLoops, int bins, double histStart, double histEnd) throws Exception {
+		this(name);
 		this.name = name;
 		this.simulationLoops = simulationLoops;
 		this.bins = bins;
@@ -45,10 +49,13 @@ public abstract class Simulation {
 		if(simulationLoops <= 0) throw new Exception("Number of Simulation loops can't be 0 or less!");
 		eventSims = new ArrayList<Future<EventSimulation>>();
 		
+	}
+	
+	protected Simulation(String name) throws FileNotFoundException {
 		System.out.println("Performing Simulation of "+name);
 		
 		//Import CSV file and select event to graph.
-		new EventsReader();
+		EventsReader.init();
 		
 		//Set up Executor to multi-thread the simulation.
 		service = Executors.newCachedThreadPool();
@@ -60,6 +67,7 @@ public abstract class Simulation {
 		while(currentLoop < simulationLoops) {
 			n = 0;
 			System.out.println("Loop "+currentLoop);
+			
 			//Loop over every event
 			EventsReader.getEvents().values().forEach(event -> {
 				event.setup();
@@ -73,10 +81,10 @@ public abstract class Simulation {
 				});
 						
 				eventSims.add(f);
-				});
+			});
 			
 			//Hold until complete.
-			while(!allTasksComplete());
+			while(!allTasksComplete(eventSims));
 			System.out.println("Simulation Finished");
 			postSimulation(currentLoop);
 			eventSims = new ArrayList<Future<EventSimulation>>();
@@ -91,8 +99,9 @@ public abstract class Simulation {
 	 * 
 	 * @param event
 	 * @return EventSimulation
+	 * @throws Exception 
 	 */
-	public abstract EventSimulation EventLoop(int eventId, int currentLoop);
+	public abstract EventSimulation EventLoop(int eventId, int currentLoop) throws Exception;
 	
 	
 	/**
@@ -112,11 +121,12 @@ public abstract class Simulation {
 	public void plotGraph() throws Exception {
 		if(!simStarted) throw new Exception("Simulation must be run with start() before plotting graph");
 		GraphValues vals = configureGraph();
-		PlotGraph plot = new PlotGraph(vals.xVals,vals.yVals);
+		plot = new PlotGraph(vals.xVals,vals.yVals);
 		plot.setGraphTitle(name);
 		plot.setErrorBars(0, vals.Errors);
 		plot.setXaxisLegend(vals.xAxis);
 		plot.setYaxisLegend(vals.yAxis);
+		plot.setLine(0);
 		plot.plot();
 	}
 	
@@ -147,15 +157,14 @@ public abstract class Simulation {
 		}
 	}
 	
-	public boolean allTasksComplete() {
-		boolean allDone = false;
-		Iterator<Future<EventSimulation>> iter = eventSims.iterator();
+	public <T> boolean allTasksComplete(List<Future<T>> f) {
+		boolean allDone = true;
+		Iterator<Future<T>> iter = f.iterator();
 		while(iter.hasNext()) {
 			Future<?> future = iter.next();
-			if(future.isDone()) {
-				allDone = true;
-			} else {
+			if(!future.isDone()) {
 				allDone = false;
+				break;
 			}
 		}
 		return allDone;
@@ -165,38 +174,11 @@ public abstract class Simulation {
 		Histogram hist = new Histogram(bins,histStart,histEnd, "Decay Length - "+smear);
 		
 		for(Future<EventSimulation> f : eventSims) {
-			n++;
 			EventSimulation sim = f.get();
-			//Fit straight lines to points - and check if sufficient data to fit one.
-			ArrayList<StraightLineFactory> factories = new ArrayList<StraightLineFactory>(); 				
-			for(ArrayList<RealVector> v : sim.getSmearedDetections(smear)) {
-				if(!v.isEmpty()) { 
-					StraightLineFactory line = new StraightLineFactory(v);
-					if(line.isValid()) {
-						factories.add(line);
-					}
-				}
-			}
-				
-			//Setup up line data to solve for nearest point.
-			int n2 = factories.size();
-			RealVector[] a = new RealVector[n2];
-			RealVector[] d = new RealVector[n2];
-			RealVector[][] lines = new RealVector[n2][];	
-				
-			for(int i = 0; i < factories.size(); i++) {
-				StraightLineFactory line = factories.get(i);
-				lines[i] = line.rawVectors;
-				a[i] = line.getOriginVector();
-				d[i] = line.getDirectionVector();
-			}
-				
-			//Find the nearest point to all lines.
-			FindNearestPoint p = new FindNearestPoint(a, d, 3);
-			
-			if(p.getPoint().getDimension() == 3) hist.fill(calculateHistogramValue(p.getPoint(), sim));
+			RealVector p = findNearestPoint(sim,smear);
+			double val = calculateHistogramValue(p, sim);
+			if(p.getDimension() == 3) hist.fill(val);
 		}
-		//hist.print();
 		return hist;
 	}
 	
@@ -205,9 +187,10 @@ public abstract class Simulation {
 	
 	public double[] calculateRegression(double smear) throws Exception {
 		Histogram hist = getHist(smear);
-		//System.out.println(Arrays.toString(hist.getX()));
-		//System.out.println(Arrays.toString(hist.getContent()));
-
+		return calculateRegression(hist);
+	}
+	
+	public double[] calculateRegression(Histogram hist) {
 		Regression reg = new Regression(hist.getX(),hist.getContent(),hist.getError());
 		double[] result = new double[2];		
 		try {
@@ -223,6 +206,37 @@ public abstract class Simulation {
 			result[1] = 0;
 		}
 		return result;
+	}
+	
+	public RealVector findNearestPoint(EventSimulation event, double smear) throws Exception {
+		
+		//Fit straight lines to points - and check if sufficient data to fit one.
+		ArrayList<StraightLineFactory> factories = new ArrayList<StraightLineFactory>(); 				
+		for(ArrayList<RealVector> v : event.getSmearedDetections(smear)) {
+			if(!v.isEmpty()) { 
+				StraightLineFactory line = new StraightLineFactory(v);
+				if(line.isValid()) {
+					factories.add(line);
+				}
+			}
+		}
+			
+		//Setup up line data to solve for nearest point.
+		int n2 = factories.size();
+		RealVector[] a = new RealVector[n2];
+		RealVector[] d = new RealVector[n2];
+			
+		//Separate out each origin and direction vector.
+		for(int i = 0; i < factories.size(); i++) {
+			StraightLineFactory line = factories.get(i);
+			a[i] = line.getOriginVector();
+			d[i] = line.getDirectionVector();
+		}
+			
+		//Find the nearest point to all lines.
+		FindNearestPoint p = new FindNearestPoint(a, d, 3);
+		
+		return p.getPoint();
 	}
 
 }

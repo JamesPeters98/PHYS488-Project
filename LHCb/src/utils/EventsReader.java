@@ -2,17 +2,25 @@ package utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import exceptions.EventsReaderException;
 import tracker.Event;
 
 public class EventsReader {
 	
-	private static HashMap<Integer,Event> events;
+	private HashMap<Integer,Event> events;
 	
-	public EventsReader() throws FileNotFoundException {
+	private static EventsReader reader;
+	private boolean init = false;
+	
+	public static void init() throws FileNotFoundException {
+		reader = new EventsReader();
+		reader.init = true;
+	}
+	
+	private EventsReader() throws FileNotFoundException {
 		events = new HashMap<Integer, Event>();
 		
     	//Split CSV into each event using the 'Next...' keyword.
@@ -76,19 +84,23 @@ public class EventsReader {
 		}
 	}
 	
-	public static Event getEvent(int id) {
-		return events.get(id);
+	public static Event getEvent(int id) throws EventsReaderException {
+		if(!reader.init) throw new EventsReaderException();
+		return reader.events.get(id);
 	}
 	
-	public static HashMap<Integer,Event> getEvents(){
-		return events;
+	public static HashMap<Integer,Event> getEvents() throws EventsReaderException{
+		if(!reader.init) throw new EventsReaderException();
+		return reader.events;
 	}
 	
-	private void resetEvents() {
-		events.values().forEach(event -> {
+	private static void resetEvents() {
+		reader.events.values().forEach(event -> {
 			event.setup();
 		});
 	}
-
+	
 }
+
+
 

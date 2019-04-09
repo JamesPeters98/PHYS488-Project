@@ -40,7 +40,6 @@ public class AverageValue extends Value {
 		
 		this.y = avgY/yList.size();
 		this.errorY = Math.sqrt(avgEr)/errorList.size();
-	}
-	
+	}	
 
 }

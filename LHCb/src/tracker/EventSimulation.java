@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
+import exceptions.EventsReaderException;
 import utils.EventsReader;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class EventSimulation {   
-    ThreadLocalRandom randGen;
+    Random randGen;
     Scanner keyboard = new Scanner(System.in);
 
     // maximum allowed number of steps before simulation is aborted
@@ -29,6 +30,9 @@ public class EventSimulation {
 	private int detectors = 19;
 	private double detectorThickness = 0.0003;
 	private double spacing = 0.03;
+	private Material detectorMat = new Material(2.33, 14, 28.085); //Silicon
+	
+	private boolean simStarted = false;
 	
 	public int eventId;
     
@@ -36,14 +40,16 @@ public class EventSimulation {
     
     public EventSimulation(Integer eventId) {
     	this.eventId = eventId;
+    }
+    
+    public void startSimulation() throws EventsReaderException {
+    	simStarted = true;
     	Event event = EventsReader.getEvent(eventId);
     	this.truePos = event.getPositionVector();
     	this.initialParticleBeta = event.getInitialParticle().getBeta();
-    	Particle[] particles = event.getParticles();
-    	//System.out.println("Particle Beta: "+initialParticleBeta);
-    	
+    	Particle[] particles = event.getParticles();    	
     	detections = new ArrayList<ArrayList<RealVector>>();
-    	randGen = ThreadLocalRandom.current();
+    	randGen = new Random();
     	//randGen.setSeed(7894694);
     	
     	// Define the genotrical properties of the experiment
@@ -63,10 +69,9 @@ public class EventSimulation {
 	 		Particles_sim[ip] = tracker.track(Experiment);
 	 		tracker = null;
  	    }
- 	    
  	    particles = null;
  	    
- 	   //Particles_sim[0].DumpTXYZPxPyPz("outputs/sample.csv");
+ 	    //Particles_sim[0].DumpTXYZPxPyPz("outputs/sample.csv");
  	    
  	    // simulate detection of each particle in each element
 	    Particle [] Particles_det = Experiment.detectParticles(Particles_sim);
@@ -82,7 +87,8 @@ public class EventSimulation {
 	    }
     }
     
-    public ArrayList<ArrayList<RealVector>> getSmearedDetections(double smear){
+    public ArrayList<ArrayList<RealVector>> getSmearedDetections(double smear) throws Exception{
+    	if(!simStarted) throw new Exception("Simulation hasn't been started!");
     	ArrayList<ArrayList<RealVector>> newDetections = new ArrayList<ArrayList<RealVector>>();
     	for(ArrayList<RealVector> detection : detections) {
     		ArrayList<RealVector> newDetection = new ArrayList<RealVector>();
@@ -95,7 +101,8 @@ public class EventSimulation {
     	return newDetections;
     }
     
-    public ArrayList<ArrayList<RealVector>> getDetections(){
+    public ArrayList<ArrayList<RealVector>> getDetections() throws Exception{
+    	if(!simStarted) throw new Exception("Simulation hasn't been started!");
     	return detections;
     }
     
@@ -110,26 +117,19 @@ public class EventSimulation {
 
     
     public Geometry SetupExperiment () {
-	// example setup the experiment:
-	// * first line defines the size of the experiment in vacuum
-	// * then add one block of iron: 0.3x0.3 m^2 wide in x,y-direction, ironThickness cm thick in z-direction
-	// * then add two thin (1mm) "silicon detectors" 10cm and 20cm after the iron block
+		// example setup the experiment:
+		// * first line defines the size of the experiment in vacuum
+		// * then add one block of iron: 0.3x0.3 m^2 wide in x,y-direction, ironThickness cm thick in z-direction
+		// * then add two thin (1mm) "silicon detectors" 10cm and 20cm after the iron block
 
-	Geometry Experiment = new Geometry(randGen, 0.00001);
+		Geometry Experiment = new Geometry(randGen, 0.00001);
+		
+		Experiment.AddCuboid(-0.024, -0.024, 0, 0.024, 0.024, 1, 0,0,0);
 	
-	Experiment.AddCuboid(-0.024, -0.024, 0, 0.024, 0.024, 1, 0,0,0);
-
-	
-	for(int i = 0; i < detectors; i++) {
-		Experiment.AddDisk(0, 0, i*(spacing),
-			     0.042, 0.008, detectorThickness,
-			     2.33, 14, 28.085);
-		//Experiment.AddCuboid(-0.024, -0.024, i*(spacing), 0.024, 0.024, i*(spacing)+detectorThickness, 2.33, 14, 28.085);
-	}
-	
-	//Experiment.Print();
-
-	return Experiment;
+		for(int i = 0; i < detectors; i++) {
+			Experiment.AddDisk(0, 0, i*(spacing), 0.042, 0.008, detectorThickness, detectorMat.getDensity(), detectorMat.getZ(), detectorMat.getA());
+		}	
+		return Experiment;
     }
 
 	public void setDetectors(int detectors) {
@@ -143,22 +143,8 @@ public class EventSimulation {
 	public void setSpacing(double spacing) {
 		this.spacing = spacing;
 	}
-
-
-//    public static Particle[] GetParticles(double[] pos0, double startMomentum, double startAngle) {
-//	// example to simulate just one muon starting at p0
-//	// with a total momentum startMomentum and theta=startAngle
-//	// we follow the particle physics "convention"
-//	// to have the z-axis in the (approximate) direction of the beam
-//	
-//	Particle [] Particles_gen = new Particle[1];
-//	// initial momentum px,py,pz (MeV)
-//	double phi = 0;
-//	double[] mom0 = {startMomentum*Math.sin(startAngle)*Math.cos(phi),
-//			 startMomentum*Math.sin(startAngle)*Math.sin(phi),
-//			 startMomentum*Math.cos(startAngle)};
-//	Particles_gen[0] = new Particle("muon", pos0, mom0, numSteps);
-//
-//	return Particles_gen;
-//    }
+	
+	public void setDetectorMaterial(Material mat) {
+		this.detectorMat = mat;
+	}
 }

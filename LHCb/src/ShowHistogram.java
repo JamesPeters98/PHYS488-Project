@@ -1,25 +1,26 @@
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 
+import exceptions.EventsReaderException;
 import flanagan.analysis.Regression;
 import utils.EventsReader;
 import utils.Histogram;
 
 public class ShowHistogram {
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException, EventsReaderException {
 		//Decay Length Histogram
 		Histogram histLength = new Histogram(50, 0, 25, "Decay Length");
 		//Decay Time Histogram
 		Histogram histTime = new Histogram(50, 0, 15, "Decay Time");
 		
 		//Read events from CSV.
-		EventsReader reader = new EventsReader();
+		EventsReader.init();
 		
 		//Loop over every event.
-		reader.events.forEach(event -> {
-			histLength.fill(event.getDecayLength());
-			histTime.fill(event.getDecayTime());
+		EventsReader.getEvents().entrySet().forEach(event -> {
+			histLength.fill(event.getValue().getDecayLength());
+			histTime.fill(event.getValue().getDecayTime());
 		});
 		
 		//Regression  for Decay Length.

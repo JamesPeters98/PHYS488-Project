@@ -1,20 +1,18 @@
 package simulations;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.commons.math3.linear.RealVector;
 
+import exceptions.EventsReaderException;
+import simulations.abstracts.Simulation;
 import tracker.Event;
 import tracker.EventSimulation;
 import utils.AverageValue;
 import utils.EventsReader;
 import utils.GraphValues;
-import utils.Value;
 
-public class SmearingSimulation extends Simulation {
+public class SmearingSim extends Simulation {
 	
 	private double startResolution, powerStep, smearNum;
 	
@@ -22,15 +20,20 @@ public class SmearingSimulation extends Simulation {
 	private HashMap<Double,AverageValue> decayTimes; //Key - smear, Value - Decay Time value and Error.
 	
 	public static void main(String args[]) throws Exception {
-		SmearingSimulation sim = new SmearingSimulation(0.005, 0.05, 100);
+		double startSmear = 0.0001;		//Starting smear - lowest resolution.
+		double stepSmear = 0.05;		//Smear step, smear decreased logarithmically by 10^-stepSmear.
+		int numberOfSmears = 100;		//Number of different smears to calculate from startSmear.
+		int accuracy = 20;				//Number of times to run the simulation, each time calculating a more accurate result and error.
+		
+		SmearingSim sim = new SmearingSim(startSmear, stepSmear, numberOfSmears, accuracy);
 		sim.start();
 		sim.plotGraph();
 		sim.saveRawDataToCSV("SmearingSim.csv");
 		sim.shutdown();
 	}
 
-	public SmearingSimulation(double startResolution, double powerStep, int n) throws Exception {
-		super("Smearing affects on Decay Time",1,50,0,12);
+	public SmearingSim(double startResolution, double powerStep, int n, int accuracy) throws Exception {
+		super("Smearing affects on Decay Time",accuracy,50,0,12);
 		this.smearNum = n;
 		this.startResolution = startResolution;
 		this.powerStep = powerStep;
@@ -39,9 +42,10 @@ public class SmearingSimulation extends Simulation {
 	}
 
 	@Override
-	public EventSimulation EventLoop(int eventId, int currentLoop) {
+	public EventSimulation EventLoop(int eventId, int currentLoop) throws EventsReaderException {
 		//Create simulation for all particles in event.
 		EventSimulation sim = new EventSimulation(eventId);
+		sim.startSimulation();
 		return sim;
 	}
 
@@ -54,12 +58,12 @@ public class SmearingSimulation extends Simulation {
 			double r = startResolution*Math.pow(10, -i*powerStep);
 			double[] reg = calculateRegression(r);
 			double logr = Math.log10(r);
-			System.out.println(logr+": "+Arrays.toString(reg));
 			if(decayTimes.containsKey(logr)) {
 				AverageValue val = decayTimes.get(logr);
 				val.add(reg);
 			} else {
-				decayTimes.put(logr, new AverageValue(logr,reg));
+				AverageValue val = new AverageValue(logr,reg);
+				decayTimes.put(logr, val);
 			}
 		}		
 	}
@@ -79,7 +83,12 @@ public class SmearingSimulation extends Simulation {
 		//Add point to histogram.
 		double length =	point.getNorm();
 		double c = 299792458;
-		Event event = EventsReader.getEvent(sim.eventId);
+		Event event = null;
+		try {
+			event = EventsReader.getEvent(sim.eventId);
+		} catch (EventsReaderException e) {
+			e.printStackTrace();
+		}
 		double time = Math.pow(10, 12)*(length)/(c*event.getInitialParticle().getGamma());
 		return time;
 	}

@@ -22,7 +22,7 @@ class Geometry
     // * doMultScatter -- calculate MultipleScattering via associated class and apply to Particle
     // * detectParticle -- simulate a detected particle position with resolution smearing applied
     
-    private ThreadLocalRandom randGen;
+    private Random randGen;
     private static final int maxShapes = 100;
     private int nshapes;
     private int [] type;
@@ -34,7 +34,7 @@ class Geometry
 
     private double minfeaturesize;
 
-    public Geometry(ThreadLocalRandom rg, double featuresize) {
+    public Geometry(Random rg, double featuresize) {
 		randGen = rg;
 		nshapes = 0;
 		type = new int[maxShapes];

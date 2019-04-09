@@ -38,5 +38,22 @@ public class Value {
 	public double ErrorY() {
 		return errorY;
 	}
+	
+	public void print() {
+		System.out.println(y+" +/- "+errorY);
+	}
+	
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	public void setErrorY(double errorY) {
+		this.errorY = errorY;
+	}
+
 
 }

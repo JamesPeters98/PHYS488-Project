@@ -13,13 +13,17 @@ import utils.Histogram;
 import utils.StraightLineFactory;
 
 
-public class EventsTest {
-
+public class Display3DEvent {
+	
+	static int eventId = 10; //Event to display
+	
 	public static void main(String[] args) throws Exception {
 		//Import CSV file and select event to graph.
-		EventsReader events = new EventsReader();
-		Event event = events.events.get(114);
-		EventSimulation sim = new EventSimulation(event);
+		EventsReader.init();
+		
+		EventSimulation sim = new EventSimulation(eventId);
+		sim.startSimulation();
+		Event event = EventsReader.getEvent(eventId);
 		
 		//Fit straight lines to points - and check if sufficient data to fit one.
 		ArrayList<StraightLineFactory> factories = new ArrayList<StraightLineFactory>(); 
@@ -61,8 +65,11 @@ public class EventsTest {
 		//Find the nearest point to all lines.
 		FindNearestPoint p = new FindNearestPoint(a, d, 3);
 		
+		double dist = p.getPoint().mapMultiply(1000).subtract(sim.getTruePosition()).getNorm();
+		
 		System.out.println("Sim pos: "+p.getPoint().mapMultiply(1000)+" mm");
 		System.out.println("True pos: "+event.getPositionVector()+" mm");
+		System.out.println("Distance: "+dist);
 		
 		//Produce graphs
 		new Graph("Detections", lines, a, d);
