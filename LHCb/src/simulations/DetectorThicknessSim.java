@@ -15,7 +15,7 @@ public class DetectorThicknessSim extends AveragePointSimulation {
 		int numberOfRepeatSims = 1000; 			//Number of times to simulate each event (Higher provides more accuracy)
 		int numberOfSteps = 20; 				//Number of steps to take (Total simulations ran = numberOfRepeatsSims*numberOfSteps
 		double startThickness = 0.0001; 		//Starting Detector Thickness
-		double step = 0.0005; 					//Step to increase the Detector thickness by each loop.
+		double step = 0.00075; 					//Step to increase the Detector thickness by each loop.
 		double smear = 0;
 		
 		DetectorThicknessSim sim = new DetectorThicknessSim(eventID, numberOfRepeatSims, numberOfSteps, startThickness, step, smear);
