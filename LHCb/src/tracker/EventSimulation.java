@@ -27,10 +27,11 @@ public class EventSimulation {
     private RealVector truePos;
     public Particle [] Particles_sim;
     
-	private int detectors = 19;
-	private double detectorThickness = 0.0003;
-	private double spacing = 0.03;
-	private Material detectorMat = new Material(2.33, 14, 28.085); //Silicon
+    //Parameters of the Sim
+	private int detectors = 19;										//Number of detectors
+	private double detectorThickness = 0.0003;						//Thickness of the detectors (m)
+	private double spacing = 0.03;									//Spacing of the detectors (m)
+	private Material detectorMat = new Material(2.33, 14, 28.085); 	//Material of the detector, default Silicon.
 	
 	private boolean simStarted = false;
 	
@@ -89,9 +90,17 @@ public class EventSimulation {
     
     public ArrayList<ArrayList<RealVector>> getSmearedDetections(double smear) throws Exception{
     	if(!simStarted) throw new Exception("Simulation hasn't been started!");
+    	
+    	//Create new List to hold the lists of detections.
     	ArrayList<ArrayList<RealVector>> newDetections = new ArrayList<ArrayList<RealVector>>();
+    	
+    	//Loop over all the true detections.
     	for(ArrayList<RealVector> detection : detections) {
+    		
+    		//Create List to hold the smeared detections.
     		ArrayList<RealVector> newDetection = new ArrayList<RealVector>();
+    		
+    		//Loop over every detection and create a new vector with smeared position vectors.
     		for(RealVector v : detection) {
     			RealVector vNew = new ArrayRealVector(new double[] {v.getEntry(0)+smear(smear),v.getEntry(1)+smear(smear),v.getEntry(2)+smear(smear)});
     			newDetection.add(vNew);
@@ -124,8 +133,10 @@ public class EventSimulation {
 
 		Geometry Experiment = new Geometry(randGen, 0.00001);
 		
+		//Cuboid around the detector as vacuum space.
 		Experiment.AddCuboid(-0.024, -0.024, 0, 0.024, 0.024, 1, 0,0,0);
 	
+		//Adds a row of disk detectors based on the parameters given.
 		for(int i = 0; i < detectors; i++) {
 			Experiment.AddDisk(0, 0, i*(spacing), 0.042, 0.008, detectorThickness, detectorMat.getDensity(), detectorMat.getZ(), detectorMat.getA());
 		}	

@@ -25,6 +25,8 @@ public class EventsReader {
 		
     	//Split CSV into each event using the 'Next...' keyword.
 		Scanner scanner = new Scanner(new File("b0vectors1.csv"));
+		
+		//Splits the CSV into each event splitting around the 'Next' line.
         scanner.useDelimiter("\\s*Next...\\s*");
         
         int id = 0;
