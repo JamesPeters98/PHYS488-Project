@@ -31,6 +31,7 @@ public abstract class SimpleSimulation extends Simulation {
 		this.simStarted = true;
 		
 		for(int s = 0; s < separateMeasurements; s++) {
+			System.out.println("Starting Loop "+(s+1)+" of repeated measurements.");
 			for(int r = 0; r < repeatMeasurements; r++) {
 				n = 0;
 				//System.out.println("Loop "+currentLoop);
@@ -39,13 +40,17 @@ public abstract class SimpleSimulation extends Simulation {
 				Event event = EventsReader.getEvent(eventId);
 				
 				event.setup();
+				final int i = (s*repeatMeasurements)+r;
+				//System.out.println("Added event: "+i);
 				Future<EventSimulation> f = service.submit(() -> {
 					n++;
 					//Print out simulation progress.
 					//if(n % 250 == 0)
 					//System.out.println("Simulating event "+n+"/"+EventsReader.getEvents().size());
 						
-					return EventLoop(event.getId(),currentLoop);
+					//System.out.println("Running event: "+i);
+					EventSimulation e = EventLoop(event.getId(),i);
+					return e;
 				});
 							
 				eventSims.add(f);
@@ -53,19 +58,25 @@ public abstract class SimpleSimulation extends Simulation {
 				//Hold until complete.
 				currentLoop++;
 			}
-			while(!allTasksComplete(eventSims));
+			//System.out.println("eventSims: "+eventSims.size());
+			//System.out.println("expectedSize: "+repeatMeasurements);
+			System.out.println("Waiting for sims to complete...");
+			while(!allTasksComplete(eventSims)) {
+				
+			}
 			postSimulation(s);
+			eventSims = new ArrayList<Future<EventSimulation>>();
 			System.out.println("Completed Loop "+(s+1)+" of repeated measurements.");
 		}
 		
 		postSimulationLoop();
 		System.out.println("Simulation Finished");
-		eventSims = new ArrayList<Future<EventSimulation>>();
 	}
 	
 	@Override
 	public EventSimulation EventLoop(int eventId, int currentLoop) throws Exception {
-		int i = currentLoop/repeatMeasurements;
+		int i = (currentLoop)/repeatMeasurements;
+		//System.out.println("CurrentLoop: "+currentLoop);
 		CurrentLoop(i);
 		return null;
 	}

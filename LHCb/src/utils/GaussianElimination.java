@@ -13,8 +13,7 @@ public class GaussianElimination
 	
 	private RealVector solution;
 	
-	public GaussianElimination(double[][] A, double[] B, int dimensions) {
-	        int N = dimensions;
+	public GaussianElimination(double[][] A, double[] B) {
 	        solve(A,B);
 	}
 	

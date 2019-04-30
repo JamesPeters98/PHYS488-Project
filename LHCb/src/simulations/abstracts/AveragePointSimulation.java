@@ -15,8 +15,8 @@ public abstract class AveragePointSimulation extends SimpleSimulation {
 	
 	protected double start;
 	protected double step;
-	Histogram hist;
-	List<Value> averageDistances;
+	protected Histogram hist;
+	protected List<Value> averageDistances;
 	
 	
 	public AveragePointSimulation(String name, int eventId, int repeatMeasurements, int n, double start, double step, double smear) throws Exception {
@@ -29,13 +29,18 @@ public abstract class AveragePointSimulation extends SimpleSimulation {
 		hist = getHist();
 	}
 	
-	private Histogram getHist() {
+	public AveragePointSimulation(String name, int eventId, int repeatMeasurements, int n, double start, double step) throws Exception {
+		this(name, eventId, repeatMeasurements, n, start, step, start);
+	}
+	
+	protected Histogram getHist() {
 		return new Histogram(100, 0, 2, "Hist");
 	}
 
 	@Override
 	public void postSimulation(int currentLoop) throws Exception {
 		//hist.writeToDisk("DetectorThicknessSimple"+currentLoop+".csv");
+		//System.out.println("Current Loop: "+currentLoop);
 		Value val = new Value(calculateRegression(hist));
 		val.setX(start+currentLoop*step);
 		val.print();
@@ -50,6 +55,7 @@ public abstract class AveragePointSimulation extends SimpleSimulation {
 
 	@Override
 	public void CurrentLoop(int n) throws Exception {
+		//System.out.println("n: "+n+" hist: "+hist.getNfilled());
 		EventSimulation sim = new EventSimulation(eventId);
 		eventManipulation(sim,n);
 		sim.startSimulation();

@@ -13,7 +13,6 @@ public class FindNearestPoint {
 	private int dim; //Dimension of system.
 	private int n; //Number of lines.
 	private RealVector[] a, d; //Arrays of: Position Vectors, Direction Vectors.
-	private RealVector p;
 	
 	private RealMatrix I;
 	private RealMatrix R;
@@ -28,7 +27,6 @@ public class FindNearestPoint {
 		this.a = a;
 		this.d = d;
 		
-		p = new ArrayRealVector(dim);
 		
 		findNearestPoint();
 	}
@@ -43,7 +41,7 @@ public class FindNearestPoint {
 			q = q.add(I.subtract(d[i].outerProduct(d[i])).operate(a[i]));
 		}
 		
-		GaussianElimination g = new GaussianElimination(R.getData(),q.toArray(),dim);
+		GaussianElimination g = new GaussianElimination(R.getData(),q.toArray());
 		solution = g.getSolution();
 	}
 	
