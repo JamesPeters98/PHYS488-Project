@@ -67,7 +67,7 @@ public class DetectorSpacingSimDecayTime extends Simulation {
 
 	@Override
 	public GraphValues configureGraph() {
-		return new GraphValues(decayTimes, "Log10(resolution)", "Decay Time", "Log10(m)", "ps"); 
+		return new GraphValues(decayTimes, "Spacing", "Decay Time", "m", "ps"); 
 	}
 
 	@Override
