@@ -71,6 +71,7 @@ public abstract class Simulation {
 	
 	//Starts simulation and holds until Simulation complete.
 	public void start() throws Exception {
+		long time1 = System.currentTimeMillis();
 		simStarted = true;
 		while(currentLoop < simulationLoops) {
 			n = 0;
@@ -99,6 +100,8 @@ public abstract class Simulation {
 			currentLoop++;
 		}
 		postSimulationLoop();
+		long finalTime = System.currentTimeMillis()-time1;
+		System.out.println("Running time: "+finalTime/1000.0+"s");
 		//events.events = null;
 	}
 	

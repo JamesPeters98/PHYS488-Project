@@ -12,7 +12,7 @@ import utils.AverageValue;
 import utils.EventsReader;
 import utils.GraphValues;
 
-public class SmearingSim extends Simulation {
+public class DetectorSmearingSimDecayTime extends Simulation {
 	
 	private double startResolution, powerStep, smearNum;
 	
@@ -25,17 +25,15 @@ public class SmearingSim extends Simulation {
 		int numberOfSmears = 100;		//Number of different smears to calculate from startSmear.
 		int accuracy = 10;				//Number of times to run the simulation, each time calculating a more accurate result and error.
 		
-		long time1 = System.currentTimeMillis();
-		SmearingSim sim = new SmearingSim(startSmear, stepSmear, numberOfSmears, accuracy);
+		
+		DetectorSmearingSimDecayTime sim = new DetectorSmearingSimDecayTime(startSmear, stepSmear, numberOfSmears, accuracy);
 		sim.start();
-		long finalTime = System.currentTimeMillis()-time1;
-		System.out.println("Running time: "+finalTime/1000.0+"s");
 		sim.plotGraph();
-		sim.saveRawDataToCSV("SmearingSim.csv");
+		sim.saveRawDataToCSV("SmearingSimDecayTime.csv");
 		sim.shutdown();
 	}
 
-	public SmearingSim(double startResolution, double powerStep, int n, int accuracy) throws Exception {
+	public DetectorSmearingSimDecayTime(double startResolution, double powerStep, int n, int accuracy) throws Exception {
 		super("Smearing affects on Decay Time",accuracy,50,0,12);
 		this.smearNum = n;
 		this.startResolution = startResolution;

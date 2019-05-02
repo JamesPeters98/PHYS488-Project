@@ -46,6 +46,7 @@ public abstract class AveragePointSimulation extends Simulation {
 	
 	@Override
 	public void start() throws Exception {
+		long time1 = System.currentTimeMillis();
 		this.simStarted = true;
 		
 		for(int s = 0; s < separateMeasurements; s++) {
@@ -80,6 +81,8 @@ public abstract class AveragePointSimulation extends Simulation {
 		
 		postSimulationLoop();
 		System.out.println("Simulation Finished");
+		long finalTime = System.currentTimeMillis()-time1;
+		System.out.println("Running time: "+finalTime/1000.0+"s");
 	}
 	
 	@Override

@@ -4,9 +4,9 @@ import simulations.abstracts.AveragePointSimulation;
 import tracker.EventSimulation;
 import utils.Value;
 
-public class SmearingSim2 extends AveragePointSimulation {
+public class DetectorSmearingSimAveragePoint extends AveragePointSimulation {
 
-	public SmearingSim2(int eventId, int repeatMeasurements, int n, double start, double step)
+	public DetectorSmearingSimAveragePoint(int eventId, int repeatMeasurements, int n, double start, double step)
 			throws Exception {
 		super("Smearing", eventId, repeatMeasurements, n, start, step);
 	}
@@ -18,10 +18,10 @@ public class SmearingSim2 extends AveragePointSimulation {
 		double startSmear = 0.0001; 			//Starting Detector Thickness
 		double step = 0.05; 						//Step to increase the Detector thickness by each loop.
 		
-		SmearingSim2 sim = new SmearingSim2(eventID, numberOfRepeatSims, numberOfSteps, startSmear, step);
+		DetectorSmearingSimAveragePoint sim = new DetectorSmearingSimAveragePoint(eventID, numberOfRepeatSims, numberOfSteps, startSmear, step);
 		sim.start();
 		sim.plotGraph();
-		sim.saveRawDataToCSV("SmearingSim2.csv");
+		sim.saveRawDataToCSV("SmearingSimAveragePoint.csv");
 		sim.shutdown();
 
 	}
