@@ -32,10 +32,12 @@ public class FindNearestPoint {
 	}
 	
 	private void findNearestPoint() {
+		//Create the Matrix R, Identity Matrix I and Vector q
 		I = MatrixUtils.createRealIdentityMatrix(dim);
 		R = MatrixUtils.createRealMatrix(dim, dim);
 		q = new ArrayRealVector(dim);
 		
+		//Performs summation of R and q according to algorithm
 		for(int i = 0; i < n; i++) {
 			R = R.add(I.subtract(d[i].outerProduct(d[i])));
 			q = q.add(I.subtract(d[i].outerProduct(d[i])).operate(a[i]));

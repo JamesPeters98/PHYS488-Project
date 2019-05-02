@@ -23,6 +23,14 @@ import utils.GraphValues;
 import utils.Histogram;
 import utils.StraightLineFactory;
 
+/**
+ * @author james
+ *
+ */
+/**
+ * @author james
+ *
+ */
 public abstract class Simulation {
 	
 	public String name; //Simulation name.
@@ -116,7 +124,20 @@ public abstract class Simulation {
 	 */
 	public abstract void postSimulationLoop();
 	
+	
+	/**
+	 * @return GraphValues object that contains all
+	 * the information to be plotted onto the final graph.
+	 */
 	public abstract GraphValues configureGraph();
+	
+	/**
+	 * @param point
+	 * @param sim
+	 * @return double - Return a value to add to histogram.
+
+	 */
+	public abstract double calculateHistogramValue(RealVector point, EventSimulation sim);
 	
 	public void plotGraph() throws Exception {
 		if(!simStarted) throw new Exception("Simulation must be run with start() before plotting graph");
@@ -181,9 +202,6 @@ public abstract class Simulation {
 		}
 		return hist;
 	}
-	
-	//Return a value to add to histogram.
-	public abstract double calculateHistogramValue(RealVector point, EventSimulation sim);
 	
 	public double[] calculateRegression(double smear) throws Exception {
 		Histogram hist = getHist(smear);
