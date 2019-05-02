@@ -50,18 +50,8 @@ public class StraightLineFactory {
 		//Compute the covariance of the vectors as a Matrix
 		RealMatrix XPX = X.transpose().multiply(PX);
 		
-//		for(double[] row : XPX.getData()) {
-//			System.out.println(Arrays.toString(row));
-//		}
-		
 		//Calculate Eigenvectors and Eigenvalues.
 		ed = new EigenDecomposition(XPX);
-		
-//		if(!isValid()) System.out.println("Invalid line!!!");
-//		System.out.println("Direction Vector | "+getDirectionVector());
-//		System.out.println("Origin Vector    | "+getOriginVector());	
-//		System.out.println("------------------------------------------");	
-
 	}
 	
 	public StraightLineFactory(ArrayList<RealVector> vectors) throws Exception {

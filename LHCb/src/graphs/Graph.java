@@ -78,15 +78,15 @@ public class Graph extends JFrame {
     
     
     private Chart3D createScatterChart(XYZDataset<?> dataset) {
-        Chart3D chart = Chart3DFactory.createScatterChart("Raw Data", "", dataset, "X", "Y", "Z");
+        Chart3D chart = Chart3DFactory.createScatterChart("Raw Data", "", dataset, "X(m)", "Y(m)", "Z(m)");
         chart.setChartBoxColor(new Color(255, 255, 255, 128));
         XYZPlot plot = (XYZPlot) chart.getPlot();
         plot.getXAxis().setRange(-0.024, 0.024);
         plot.getYAxis().setRange(-0.024, 0.024);
-        plot.getZAxis().setRange(-0.1, 0.6);
+        plot.getZAxis().setRange(-0.1, 0.3);
         
         ScatterXYZRenderer renderer = (ScatterXYZRenderer) plot.getRenderer();
-        renderer.setSize(0.02);
+        renderer.setSize(0.05);
         renderer.setColors(Colors.createIntenseColors());
         return chart;    
     }
