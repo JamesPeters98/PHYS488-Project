@@ -25,8 +25,11 @@ public class SmearingSim extends Simulation {
 		int numberOfSmears = 100;		//Number of different smears to calculate from startSmear.
 		int accuracy = 20;				//Number of times to run the simulation, each time calculating a more accurate result and error.
 		
+		long time1 = System.currentTimeMillis();
 		SmearingSim sim = new SmearingSim(startSmear, stepSmear, numberOfSmears, accuracy);
 		sim.start();
+		long finalTime = System.currentTimeMillis()-time1;
+		System.out.println("Running time: "+finalTime/1000.0+"s");
 		sim.plotGraph();
 		sim.saveRawDataToCSV("SmearingSim.csv");
 		sim.shutdown();
