@@ -1,3 +1,6 @@
+## Final report write up
+https://github.com/JamesPeters98/PHYS488-Project/blob/master/report.pdf
+
 # LHCb Simulations
 
 This project is a java simulation of the Large Hadron Collider Beauty Experiment.
